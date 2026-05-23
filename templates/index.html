@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>詩詞翻譯器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎋 詩詞翻譯器</h1>
+            <p class="subtitle">將古詩詞轉為現代文</p>
+        </header>
+
+        <main>
+            <div class="translator-box">
+                <div class="input-section">
+                    <label for="inputText">輸入古文</label>
+                    <textarea 
+                        id="inputText" 
+                        placeholder="請輸入要翻譯的古詩詞..." 
+                        rows="6"
+                    ></textarea>
+                </div>
+
+                <div class="button-section">
+                    <button id="translateBtn" class="btn btn-primary">翻譯</button>
+                    <button id="clearBtn" class="btn btn-secondary">清除</button>
+                </div>
+
+                <div id="loadingSpinner" class="spinner hidden"></div>
+
+                <div class="output-section" id="outputSection" style="display: none;">
+                    <label>翻譯結果</label>
+                    <div id="outputText" class="output-text"></div>
+                    <button id="copyBtn" class="btn btn-copy">複製結果</button>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </div>
+
+            <footer class="info-box">
+                <h3>使用說明</h3>
+                <ul>
+                    <li>在左側輸入框輸入古詩詞</li>
+                    <li>點擊「翻譯」按鈕進行翻譯</li>
+                    <li>翻譯結果將顯示在右側</li>
+                    <li>可以複製結果到剪貼板</li>
+                </ul>
+            </footer>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
