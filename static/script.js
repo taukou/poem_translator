@@ -14,13 +14,16 @@ const errorMessage = document.getElementById('errorMessage');
 const spinner = document.getElementById('loadingSpinner');
 const emotionSummary = document.getElementById('emotionSummary');
 const emotionSentences = document.getElementById('emotionSentences');
+const playBtn = document.getElementById('playBtn');
+const emotionSelect = document.getElementById('emotionSelect');
+const audioPlayer = document.getElementById('audioPlayer');
 const contentExplanation = document.getElementById('contentExplanation');
 const authorIntro = document.getElementById('authorIntro');
-
 let poemCatalog = [];
 let currentWordAnnotations = [];
 let currentOriginalText = '';
 let tooltipHideTimer = null;
+let currentDetectedEmotion = '平'; // 用來記錄目前這首詩被分析出的情緒，預設為平靜
 
 function setHidden(element, shouldHide) {
     if (!element) {
@@ -433,6 +436,19 @@ function displayResult(data) {
     targetLang.textContent = translation.target_language || '';
     outputText.textContent = translation.translated || '';
     renderEmotionAnalysis(emotionAnalysis);
+    
+    // 自動轉換並記錄情緒變數
+    if (emotionAnalysis.overall_sentiment) {
+        const sentiment = emotionAnalysis.overall_sentiment;
+        if (sentiment === "positive") {
+            currentDetectedEmotion = "喜";
+        } else if (sentiment === "negative") {
+            currentDetectedEmotion = "悲";
+        } else {
+            currentDetectedEmotion = "平"; // neutral 或 mixed 都回歸平靜
+        }
+    }
+
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -562,6 +578,59 @@ inputText.addEventListener('keydown', (e) => {
         translate();
     }
 });
+
+// 語音播放功能
+async function playSpeech() {
+    const originalText = inputText.value.trim();
+    // 直接讀取系統剛剛幫你存好的情緒變數
+    const emotion = currentDetectedEmotion; 
+
+    if (!originalText) {
+        showError('沒有可播放的原始文本');
+        return;
+    }
+
+    try {
+        playBtn.disabled = true;
+        playBtn.textContent = '🗣️ 合成語音中...';
+        hideError();
+
+        const speechRes = await fetch('/api/generate-speech', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                text: originalText,
+                emotion: emotion,
+                speed: 1.0,
+                pitch: 1.0
+            })
+        });
+
+        if (!speechRes.ok) {
+            const data = await speechRes.json();
+            throw new Error(data.error || '語音合成失敗');
+        }
+
+        const speechData = await speechRes.json();
+        
+        audioPlayer.src = speechData.audio_url;
+        audioPlayer.play();
+        
+        showSuccess(`🎵 已自動偵測情緒「${emotion}」，開始朗讀原文`);
+
+    } catch (error) {
+        showError(error.message || '發生錯誤，請重試');
+    } finally {
+        playBtn.disabled = false;
+        playBtn.textContent = '🔊 朗讀原文';
+    }
+}
+
+// 綁定按鈕事件 (這行保留在最下面即可)
+if (playBtn) playBtn.addEventListener('click', playSpeech);
+
+// 綁定按鈕事件
+if (playBtn) playBtn.addEventListener('click', playSpeech);
 
 // 頁面加載時檢查服務狀態
 document.addEventListener('DOMContentLoaded', () => {
