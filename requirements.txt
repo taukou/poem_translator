@@ -10,3 +10,4 @@ requests
 azure-ai-translation-text
 azure-core
 azure-ai-textanalytics
+azure-cognitiveservices-speech

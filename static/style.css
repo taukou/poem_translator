@@ -441,3 +441,40 @@ select:focus {
         grid-template-columns: 88px 1fr 44px;
     }
 }
+
+/* 語音播放區塊樣式
+.btn-speech {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    flex: 2;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-speech:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
+}
+
+.emotion-select {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    font-size: 1em;
+    outline: none;
+    cursor: pointer;
+    background-color: white;
+    font-family: inherit;
+    flex: 1;
+    transition: border-color 0.3s ease;
+}
+
+.emotion-select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.16);
+}

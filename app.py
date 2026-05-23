@@ -5,6 +5,7 @@ import os
 import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
+from utils.speech_generator import generate_emotional_speech
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -90,12 +91,6 @@ def translate():
         return jsonify({'error': '請輸入要翻譯的文本'}), 400
     
     try:
-<<<<<<< HEAD
-        result = translate_poem(text, target_language)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': f'翻譯失敗: {str(e)}'}), 500
-=======
         req_target = data.get('target_language') or 'de'
         result = translate_poem(text, target_language=req_target)
         return jsonify({
@@ -104,9 +99,8 @@ def translate():
             'target_language': result.get('target_language', ''),
             'translated': result.get('translated', '')
         })
-    except Exception:
-        return jsonify({'error': '翻譯服務發生錯誤'}), 500
->>>>>>> backup/frontend-before-push
+    except Exception as e:
+        return jsonify({'error': f'翻譯服務發生錯誤: {str(e)}'}), 500
 
 
 @app.route('/api/analyze-emotion', methods=['POST'])
@@ -158,6 +152,28 @@ def translate_and_analyze():
     except Exception as e:
         return jsonify({'error': f'翻譯和分析失敗: {str(e)}'}), 500
 
+
+@app.route('/api/generate-speech', methods=['POST'])
+def generate_speech():
+    """情感語音合成端點 - 根據情緒調整音調和語速"""
+    data = request.get_json()
+    
+    # 接收前端傳來的參數，並設定預設值
+    text = data.get('text', '').strip()
+    emotion = data.get('emotion', '平')
+    speed = float(data.get('speed', 1.0))
+    pitch = float(data.get('pitch', 1.0))
+    
+    if not text:
+        return jsonify({'error': '請輸入要轉換的文本'}), 400
+        
+    try:
+        # 呼叫我們剛寫好的模組
+        result = generate_emotional_speech(text, emotion, speed, pitch)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'error': f'語音合成失敗: {str(e)}'}), 500
 
 @app.route('/api/health', methods=['GET'])
 def health():

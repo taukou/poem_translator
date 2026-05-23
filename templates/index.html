@@ -63,9 +63,7 @@
                         <button class="btn btn-secondary" id="example2">春望</button>
                         <button class="btn btn-secondary" id="example3">靜夜思</button>
                     </div>
-                </div>
-
-                <div id="errorMessage" class="error-message hidden"></div>
+                </div> <div id="errorMessage" class="error-message hidden"></div>
             </section>
 
             <section class="panel panel-output">
@@ -87,10 +85,15 @@
                             <h3>翻譯結果</h3>
                             <span id="targetLang" class="result-tag"></span>
                         </div>
-                        <div id="outputText" class="output-text placeholder-text">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
-                        <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
+                        <div id="outputText" class="output-text placeholder-text" style="margin-bottom: 15px;">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
+                        
+                        <div class="output-controls" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="copyBtn" class="btn btn-copy" style="flex: 1; margin-top: 0;">📋 複製結果</button>
+                            <button id="playBtn" class="btn btn-speech" style="flex: 1;">🔊 朗讀原文</button>
+                        </div>
+                        
+                        <audio id="audioPlayer" style="display: none;"></audio>
                     </article>
-
                     <article class="result-card emotion-card">
                         <div class="result-card-header">
                             <h3>情緒分析</h3>
