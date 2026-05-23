@@ -5,29 +5,30 @@
 }
 
 :root {
-    --bg-1: #0f172a;
-    --bg-2: #1e293b;
-    --card: rgba(255, 255, 255, 0.92);
+    --bg-1: #08111f;
+    --bg-2: #16253d;
+    --card: rgba(255, 255, 255, 0.9);
     --card-strong: #ffffff;
-    --text: #102033;
-    --muted: #5f6b7a;
-    --border: rgba(16, 32, 51, 0.1);
-    --accent: #ef8354;
-    --accent-2: #3b82f6;
-    --accent-3: #14b8a6;
+    --text: #0f1d2d;
+    --muted: #607084;
+    --border: rgba(15, 29, 45, 0.1);
+    --accent: #f08a5d;
+    --accent-2: #4b7bec;
+    --accent-3: #1db7a8;
     --danger: #b42318;
-    --shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+    --shadow: 0 28px 84px rgba(5, 15, 31, 0.34);
 }
 
 body {
     min-height: 100vh;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", "Noto Sans TC", Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text);
     background:
-        radial-gradient(circle at top left, rgba(239, 131, 84, 0.24), transparent 28%),
-        radial-gradient(circle at top right, rgba(59, 130, 246, 0.22), transparent 24%),
+        radial-gradient(circle at top left, rgba(240, 138, 93, 0.22), transparent 30%),
+        radial-gradient(circle at top right, rgba(75, 123, 236, 0.2), transparent 26%),
+        radial-gradient(circle at 50% 120%, rgba(29, 183, 168, 0.14), transparent 28%),
         linear-gradient(160deg, var(--bg-1), var(--bg-2));
-    padding: 24px;
+    padding: 28px;
 }
 
 .page-shell {
@@ -37,7 +38,7 @@ body {
 
 .hero {
     color: #fff;
-    margin-bottom: 24px;
+    margin-bottom: 26px;
     animation: slideDown 0.55s ease-out;
 }
 
@@ -67,23 +68,27 @@ body {
     color: rgba(255, 255, 255, 0.82);
     font-size: 1.02rem;
     line-height: 1.7;
+    max-width: 68ch;
 }
 
 .layout {
     display: grid;
     grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1.15fr);
     gap: 22px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .panel {
     background: var(--card);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.24);
     border-radius: 24px;
     box-shadow: var(--shadow);
     backdrop-filter: blur(16px);
     padding: 24px;
     animation: slideUp 0.6s ease-out;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 .panel-header {
@@ -98,14 +103,15 @@ body {
 .panel-header p {
     color: var(--muted);
     line-height: 1.6;
+    max-width: 60ch;
 }
 
 .poem-picker {
     margin-bottom: 18px;
     padding: 16px;
     border-radius: 18px;
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(255, 255, 255, 0.76));
-    border: 1px solid rgba(59, 130, 246, 0.12);
+    background: linear-gradient(180deg, rgba(75, 123, 236, 0.08), rgba(255, 255, 255, 0.74));
+    border: 1px solid rgba(75, 123, 236, 0.14);
 }
 
 .poem-picker select {
@@ -131,14 +137,14 @@ select,
     width: 100%;
     border-radius: 16px;
     border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.97);
     color: var(--text);
     font: inherit;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 textarea {
-    min-height: 360px;
+    min-height: 340px;
     resize: vertical;
     padding: 18px;
     line-height: 1.8;
@@ -167,7 +173,7 @@ select:focus {
 .button-section {
     display: flex;
     gap: 12px;
-    margin: 20px 0;
+    margin: 18px 0 20px;
 }
 
 .btn {
@@ -192,18 +198,18 @@ select:focus {
 .btn-primary {
     flex: 1.4;
     color: #fff;
-    background: linear-gradient(135deg, #ef8354 0%, #f97316 100%);
-    box-shadow: 0 16px 30px rgba(239, 131, 84, 0.28);
+    background: linear-gradient(135deg, #f08a5d 0%, #f97316 100%);
+    box-shadow: 0 16px 30px rgba(240, 138, 93, 0.26);
 }
 
 .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 18px 34px rgba(239, 131, 84, 0.34);
+    box-shadow: 0 18px 34px rgba(240, 138, 93, 0.32);
 }
 
 .btn-secondary {
     flex: 1;
     color: var(--text);
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(16, 32, 51, 0.12);
 }
 
@@ -211,7 +217,7 @@ select:focus {
     margin-top: 14px;
     width: 100%;
     color: #fff;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #4b7bec 0%, #2653d4 100%);
 }
 
 .spinner {
@@ -232,7 +238,7 @@ select:focus {
     margin-top: 8px;
     padding: 18px;
     border-radius: 18px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.68));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
     border: 1px solid rgba(16, 32, 51, 0.08);
 }
 
@@ -256,17 +262,32 @@ select:focus {
     position: relative;
 }
 
+.panel-insights {
+    grid-column: 1 / -1;
+}
+
 .output-grid {
     display: grid;
-    gap: 16px;
+    gap: 18px;
+}
+
+.poem-card,
+.translation-card {
+    min-height: 100%;
+}
+
+.lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 18px;
 }
 
 .result-card {
-    padding: 18px;
-    border-radius: 18px;
+    padding: 20px;
+    border-radius: 20px;
     background: var(--card-strong);
     border: 1px solid rgba(16, 32, 51, 0.08);
-    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.09);
 }
 
 .result-card-header {
@@ -286,8 +307,8 @@ select:focus {
     align-items: center;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(59, 130, 246, 0.1);
-    color: #1d4ed8;
+    background: rgba(75, 123, 236, 0.1);
+    color: #2451c9;
     font-size: 0.82rem;
     font-weight: 700;
 }
@@ -300,12 +321,79 @@ select:focus {
     background: linear-gradient(180deg, rgba(248, 250, 252, 1), rgba(241, 245, 249, 1));
 }
 
+.poem-text {
+    min-height: 200px;
+    padding: 18px 20px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255, 251, 238, 0.96), rgba(255, 245, 232, 0.96));
+    line-height: 2.05;
+    white-space: pre-wrap;
+}
+
+.poem-line + .poem-line {
+    margin-top: 4px;
+}
+
+.poem-word {
+    display: inline;
+    padding: 0 2px;
+    border-radius: 6px;
+    cursor: help;
+    transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.poem-word:hover {
+    background: rgba(75, 123, 236, 0.16);
+    color: #2451c9;
+    box-shadow: 0 0 0 2px rgba(75, 123, 236, 0.1);
+}
+
+.translation-stack,
+.supplement-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.ai-supplement-card {
+    display: flex;
+    flex-direction: column;
+    max-height: 620px;
+}
+
+.ai-supplement-card .supplement-stack {
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.ai-supplement-card .output-text {
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.translation-block,
+.supplement-block {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(248, 250, 252, 0.96);
+    border: 1px solid rgba(16, 32, 51, 0.06);
+}
+
+.translation-label,
+.supplement-label {
+    margin-bottom: 10px;
+    color: var(--accent-2);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
 .emotion-summary {
     padding: 16px;
     border-radius: 14px;
     margin-bottom: 14px;
-    background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(59, 130, 246, 0.08));
-    border: 1px solid rgba(20, 184, 166, 0.12);
+    background: linear-gradient(135deg, rgba(29, 183, 168, 0.1), rgba(75, 123, 236, 0.08));
+    border: 1px solid rgba(29, 183, 168, 0.12);
     line-height: 1.7;
 }
 
@@ -412,8 +500,22 @@ select:focus {
         grid-template-columns: 1fr;
     }
 
+    .lower-grid {
+        grid-template-columns: 1fr;
+    }
+
     textarea {
         min-height: 260px;
+    }
+
+    .ai-supplement-card {
+        max-height: none;
+    }
+
+    .ai-supplement-card .supplement-stack,
+    .ai-supplement-card .output-text {
+        overflow: visible;
+        max-height: none;
     }
 }
 
@@ -439,5 +541,232 @@ select:focus {
 
     .emotion-score-row {
         grid-template-columns: 88px 1fr 44px;
+    }
+
+    .poem-text {
+        min-height: 150px;
+    }
+}
+
+/* AI 分析面板樣式 */
+.ai-analysis-card {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.02), rgba(20, 184, 166, 0.02));
+    border: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.emotion-card {
+    grid-column: span 1;
+}
+
+.placeholder-text {
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* 內容解釋樣式 */
+.content-explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.explanation-section {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(248, 250, 252, 1);
+    border-left: 4px solid var(--accent-3);
+}
+
+.explanation-section h4 {
+    margin-bottom: 8px;
+    color: var(--accent-3);
+    font-size: 0.95rem;
+}
+
+.explanation-section p {
+    color: var(--text);
+    line-height: 1.8;
+    margin: 0;
+}
+
+.line-analysis {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.line-analysis li {
+    margin-bottom: 8px;
+    line-height: 1.7;
+    color: var(--text);
+}
+
+.line-analysis strong {
+    color: var(--accent-2);
+}
+
+/* 詞語註釋樣式 */
+.word-annotations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.annotation-item {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(248, 250, 252, 1);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: all 0.2s ease;
+}
+
+.annotation-item:hover {
+    background: rgba(59, 130, 246, 0.04);
+    border-color: rgba(59, 130, 246, 0.2);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.annotation-word {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent-2), #2563eb);
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 8px;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.annotation-word:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.annotation-details {
+    padding-left: 8px;
+}
+
+.annotation-meaning,
+.annotation-usage {
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.annotation-meaning .label,
+.annotation-usage .label {
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-right: 6px;
+}
+
+.annotation-meaning span:last-child,
+.annotation-usage span:last-child {
+    color: var(--text);
+}
+
+/* 詞語工具提示樣式 */
+.word-tooltip {
+    background: var(--card-strong);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+    max-width: 280px;
+    font-size: 0.9rem;
+    z-index: 10000;
+    animation: slideDown 0.3s ease-out;
+    pointer-events: none;
+}
+
+.word-tooltip .tooltip-word {
+    margin-bottom: 8px;
+    font-weight: 800;
+    color: var(--accent-2);
+}
+
+.word-tooltip .annotation-meaning,
+.word-tooltip .annotation-usage {
+    margin-bottom: 4px;
+}
+
+/* 作者介紹樣式 */
+.author-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.author-intro div {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(248, 250, 252, 1);
+    border-left: 4px solid var(--accent-3);
+    line-height: 1.7;
+}
+
+.author-intro strong {
+    color: var(--accent-3);
+    display: inline-block;
+    min-width: 80px;
+}
+
+.author-name {
+    font-size: 1.05rem;
+    border-left-color: var(--accent-2);
+}
+
+.author-name strong {
+    color: var(--accent-2);
+}
+
+/* 響應式設計 */
+@media (max-width: 1100px) {
+    .ai-analysis-card {
+        grid-column: span auto;
+    }
+
+    .lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+
+    .panel {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .annotation-item {
+        padding: 12px;
+    }
+
+    .explanation-section,
+    .author-intro div {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .word-tooltip {
+        max-width: 240px;
+    }
+
+    .poem-text {
+        min-height: 150px;
+    }
+
+    .translation-stack,
+    .supplement-stack,
+    .output-grid,
+    .lower-grid {
+        gap: 14px;
     }
 }

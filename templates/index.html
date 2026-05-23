@@ -11,33 +11,33 @@
         <header class="hero">
             <div class="hero-copy">
                 <p class="eyebrow">Poem Translator</p>
-                <h1>古詩翻譯與情緒分析</h1>
+                <h1>古詩翻譯與 AI 註釋</h1>
             </div>
         </header>
 
         <main class="layout">
             <section class="panel panel-input">
                 <div class="panel-header">
-                    <h2>輸入內容</h2>
+                    <h2>輸入區</h2>
                 </div>
 
                 <div class="poem-picker">
-                    <label for="poemSelect">從唐詩三百首選擇詩名</label>
+                    <label for="poemSelect">選擇古詩</label>
                     <select id="poemSelect">
-                        <option value="">載入詩詞清單中...</option>
+                        <option value="">請選擇一首古詩</option>
                     </select>
                 </div>
 
                 <label for="inputText">輸入古文</label>
                 <textarea
                     id="inputText"
-                    placeholder="選擇詩名後會自動帶入，或直接輸入要翻譯的古詩詞..."
+                    placeholder="請輸入或選擇一首古詩..."
                     rows="12"
                 ></textarea>
 
                 <div class="field-row">
                     <div class="field-group">
-                        <label for="targetSelect">選擇目標語言</label>
+                        <label for="targetSelect">翻譯語言</label>
                         <select id="targetSelect">
                             <option value="de" selected>德文 (de)</option>
                             <option value="en">英文 (en)</option>
@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="button-section">
-                    <button id="translateBtn" class="btn btn-primary">翻譯並分析</button>
+                    <button id="translateBtn" class="btn btn-primary">開始翻譯</button>
                     <button id="clearBtn" class="btn btn-secondary">清除</button>
                 </div>
 
@@ -56,11 +56,10 @@
 
                 <div class="example-card">
                     <h3>範例</h3>
-                    <p>點擊快速填入示例詩句。</p>
                     <div class="example-buttons">
-                        <button class="btn btn-secondary" id="example1">竹里館</button>
-                        <button class="btn btn-secondary" id="example2">春望</button>
-                        <button class="btn btn-secondary" id="example3">靜夜思</button>
+                        <button class="btn btn-secondary" id="example1">範例一</button>
+                        <button class="btn btn-secondary" id="example2">範例二</button>
+                        <button class="btn btn-secondary" id="example3">範例三</button>
                     </div>
                 </div>
 
@@ -69,36 +68,74 @@
 
             <section class="panel panel-output">
                 <div class="panel-header">
-                    <h2>輸出結果</h2>
+                    <h2>輸出區</h2>
                 </div>
 
                 <div id="outputSection" class="output-grid">
-                    <article class="result-card">
+                    <article class="result-card poem-card">
                         <div class="result-card-header">
-                            <h3>白話文解釋</h3>
-                            <span class="result-tag">Modern Chinese</span>
+                            <h3>古詩原文</h3>
+                            <span class="result-tag">詞語註釋</span>
                         </div>
-                        <div id="modernText" class="output-text placeholder-text">輸入古文後，這裡會顯示白話文解釋。</div>
+                        <div id="originalPoem" class="poem-text placeholder-text">翻譯後，這裡會顯示原文。把滑鼠移到詞語上，就能看到 AI 註釋。</div>
                     </article>
 
-                    <article class="result-card">
+                    <article class="result-card translation-card">
                         <div class="result-card-header">
-                            <h3>翻譯結果</h3>
+                            <h3>翻譯版本</h3>
                             <span id="targetLang" class="result-tag"></span>
                         </div>
-                        <div id="outputText" class="output-text placeholder-text">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
+
+                        <div class="translation-stack">
+                            <div class="translation-block">
+                                <div class="translation-label">白話解釋</div>
+                                <div id="modernText" class="output-text placeholder-text">翻譯完成後，這裡會顯示白話文解釋。</div>
+                            </div>
+
+                            <div class="translation-block">
+                                <div class="translation-label">目標語言</div>
+                                <div id="outputText" class="output-text placeholder-text">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
+                            </div>
+                        </div>
+
                         <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
                     </article>
 
+                </div>
+            </section>
+
+            <section class="panel panel-insights">
+                <div class="panel-header">
+                    <h2>分析區</h2>
+                </div>
+
+                <div class="lower-grid">
                     <article class="result-card emotion-card">
                         <div class="result-card-header">
-                            <h3>情緒分析</h3>
+                            <h3>情緒儀表板</h3>
                             <span class="result-tag">Emotion</span>
                         </div>
-                        <div id="emotionSummary" class="emotion-summary empty-state">
-                            等待分析結果。
-                        </div>
+                        <div id="emotionSummary" class="emotion-summary empty-state">等待分析結果。</div>
                         <div id="emotionSentences" class="emotion-sentences"></div>
+                    </article>
+
+                    <article class="result-card ai-supplement-card">
+                        <div class="result-card-header">
+                            <h3>AI 補充</h3>
+                            <span class="result-tag">Analysis</span>
+                        </div>
+
+                        <div class="supplement-stack">
+                            <div class="supplement-block">
+                                <div class="supplement-label">內容解釋</div>
+                                <div id="contentExplanation" class="output-text placeholder-text">進行翻譯後，這裡會顯示詩文的詳細解釋。</div>
+                            </div>
+
+                            <div class="supplement-block">
+                                <div class="supplement-label">作者介紹</div>
+                                <div id="authorIntro" class="output-text placeholder-text">進行翻譯後，這裡會顯示作者的生平和介紹。</div>
+                            </div>
+                        </div>
                     </article>
                 </div>
             </section>

@@ -5,6 +5,7 @@ import os
 import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
+from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions, compare_poems
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -111,6 +112,70 @@ def translate():
         return jsonify({'error': f'翻譯失敗: {str(e)}'}), 500
 
 
+@app.route('/api/translate-detailed', methods=['POST'])
+def translate_detailed():
+    """古詩詳細解釋API - 使用 Gemini API 提供內容解釋、詞語註釋和作者介紹
+    
+    請求示例:
+    {
+        "text": "昔日戲言身後事，今朝都到眼前來。",
+        "target_language": "zh-Hant"
+    }
+    
+    回覆包含:
+    - content_explanation: 詳細解釋古詩的內容、意境和主旨
+    - word_annotations: 詞語註釋（古文關鍵詞彙解釋）
+    - author_introduction: 作者生平、時代背景和文學成就
+    """
+    data = request.get_json()
+    text = data.get('text', '').strip()
+    target_language = data.get('target_language', 'zh-Hant')  # 預設目標語言
+    
+    if not text:
+        return jsonify({'error': '請輸入要解釋的古詩'}), 400
+    
+    try:
+        result = translate_and_analyze(text, target_language)
+        if result.get('error'):
+            return jsonify(result), 502
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': f'古詩解釋失敗: {str(e)}'}), 500
+
+
+@app.route('/api/analyze-poem-emotions', methods=['POST'])
+def api_analyze_poem_emotions():
+    """情感分析API - 使用 Gemini API 分析古詩的情感特徵"""
+    data = request.get_json()
+    text = data.get('text', '').strip()
+    
+    if not text:
+        return jsonify({'error': '請輸入要分析的文本'}), 400
+    
+    try:
+        result = analyze_poem_emotions(text)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': f'情感分析失敗: {str(e)}'}), 500
+
+
+@app.route('/api/compare-poems', methods=['POST'])
+def api_compare_poems():
+    """詩歌比較API - 使用 Gemini API 比較兩首詩的風格和特點"""
+    data = request.get_json()
+    text1 = data.get('text1', '').strip()
+    text2 = data.get('text2', '').strip()
+    
+    if not text1 or not text2:
+        return jsonify({'error': '請輸入兩首要比較的詩文'}), 400
+    
+    try:
+        result = compare_poems(text1, text2)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': f'詩歌比較失敗: {str(e)}'}), 500
+
+
 @app.route('/api/analyze-emotion', methods=['POST'])
 def analyze_emotion():
     """情緒分析API - 分析文本的情緒和意見"""
@@ -129,7 +194,7 @@ def analyze_emotion():
 
 
 @app.route('/api/translate-and-analyze', methods=['POST'])
-def translate_and_analyze():
+def translate_and_analyze_route():
     """翻譯並分析情緒API - 將古文翻譯並分析其情緒"""
     data = request.get_json()
     text = data.get('text', '').strip()
@@ -143,13 +208,6 @@ def translate_and_analyze():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'翻譯和分析失敗: {str(e)}'}), 500
-
-
-@app.route('/api/health', methods=['GET'])
-def health():
-    """健康檢查"""
-    return jsonify({'status': 'ok'})
-
 
 @app.errorhandler(404)
 def not_found(error):
