@@ -140,4 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(() => {
             showError('無法連接到服務器');
         });
+    // example buttons
+    const example1 = document.getElementById('example1');
+    const example2 = document.getElementById('example2');
+    const example3 = document.getElementById('example3');
+
+    if (example1) example1.addEventListener('click', () => {
+        inputText.value = '獨坐幽篁裡，彈琴復長嘯。深林人不知，明月來相照。';
+    });
+    if (example2) example2.addEventListener('click', () => {
+        inputText.value = '國破山河在，城春草木深。感時花濺淚，恨別鳥驚心。烽火連三月，家書抵萬金。白頭搔更短，渾欲不勝簪。';
+    });
+    if (example3) example3.addEventListener('click', () => {
+        inputText.value = '床前明月光，疑是地上霜。舉頭望明月，低頭思故鄉。';
+    });
 });

@@ -28,7 +28,6 @@
                         <option value="en">英文 (en)</option>
                         <option value="fr">法文 (fr)</option>
                         <option value="jp">日文 (ja)</option>
-                        <option value="zh-Hant">繁體中文 (zh-Hant)</option>
                     </select>
                 </div>
 
@@ -40,7 +39,7 @@
                 <div id="loadingSpinner" class="spinner hidden"></div>
 
                 <div class="output-section" id="outputSection" style="display: none;">
-                    <label>白話中文</label>
+                    <label>白話文</label>
                     <div id="modernText" class="output-text"></div>
                     <label>目標語言</label>
                     <div id="targetLang" class="output-text" style="min-height:40px;"></div>
@@ -54,15 +53,22 @@
 
             <footer class="info-box">
                 <h3>使用說明</h3>
-                <ul>
-                    <li>在上方輸入框輸入古詩詞</li>
-                    <li>點擊「翻譯」按鈕進行翻譯</li>
-                    <li>翻譯結果將顯示在下方</li>
-                    <li>可以複製結果到剪貼板</li>
-                </ul>
-            </footer>
-        </main>
-    </div>
+                <ol>
+                    <li>在「輸入古文」欄貼上古詩詞。</li>
+                    <li>從「選擇目標語言」下拉選擇目標語言（預設：德文 de）。</li>
+                    <li>點擊「翻譯」或按 <kbd>Ctrl+Enter</kbd>，系統會先將古文轉為白話中文，再翻譯成目標語言。</li>
+                    <li>結果會顯示：原文、白話中文、目標語言、翻譯結果；點「複製結果」可複製翻譯。</li>
+                </ol>
+
+                <h4>範例（點擊快速填入）</h4>
+                <p>按下下列按鈕會把範例詩句填入並自動開始翻譯：</p>
+                <div class="example-buttons" style="display:flex;gap:8px;margin-bottom:12px;">
+                    <button class="btn btn-secondary" id="example1">範例：竹里館</button>
+                    <button class="btn btn-secondary" id="example2">範例：春望</button>
+                    <button class="btn btn-secondary" id="example3">範例：靜夜思</button>
+                </div>
+
+                
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
