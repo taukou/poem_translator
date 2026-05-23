@@ -9,3 +9,4 @@ pyttsx3
 requests
 azure-ai-translation-text
 azure-core
+azure-ai-textanalytics

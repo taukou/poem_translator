@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import configparser
 import os
+import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
 
@@ -16,10 +17,66 @@ API_KEY = config.get('API', 'api_key', fallback='your_api_key_here')
 AZURE_KEY = config.get('AZURELANGUAGE', 'AZURE_LANGUAGE_KEY', fallback='your_azure_key_here')
 
 
+def load_poems():
+    """從唐詩三百首文本載入詩詞清單。"""
+    poems_path = os.path.join(os.path.dirname(__file__), '唐詩三百首.txt')
+
+    if not os.path.exists(poems_path):
+        return []
+
+    with open(poems_path, 'r', encoding='utf-8') as file:
+        content = file.read().strip()
+
+    poems = []
+    blocks = re.split(r'\n\s*\n', content)
+
+    for index, block in enumerate(blocks, start=1):
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        poem_data = {'id': index, 'title': '', 'author': '', 'style': '', 'text': ''}
+
+        for line in lines:
+            if line.startswith('詩名:'):
+                poem_data['title'] = line.replace('詩名:', '', 1).strip()
+            elif line.startswith('作者:'):
+                poem_data['author'] = line.replace('作者:', '', 1).strip()
+            elif line.startswith('詩體:'):
+                poem_data['style'] = line.replace('詩體:', '', 1).strip()
+            elif line.startswith('詩文:'):
+                poem_data['text'] = line.replace('詩文:', '', 1).strip()
+
+        if poem_data['title'] and poem_data['text']:
+            poems.append(poem_data)
+
+    return poems
+
+
+POEMS = load_poems()
+
+
 @app.route('/')
 def index():
     """主頁路由"""
     return render_template('index.html')
+
+
+@app.route('/api/poems', methods=['GET'])
+def list_poems():
+    """取得唐詩三百首詩詞清單。"""
+    return jsonify({
+        'count': len(POEMS),
+        'poems': POEMS
+    })
+
+
+@app.route('/api/poems/<int:poem_id>', methods=['GET'])
+def get_poem(poem_id):
+    """依 ID 取得單首詩詞。"""
+    poem = next((item for item in POEMS if item['id'] == poem_id), None)
+
+    if poem is None:
+        return jsonify({'error': '找不到指定的詩詞'}), 404
+
+    return jsonify(poem)
 
 
 @app.route('/api/translate', methods=['POST'])
@@ -33,10 +90,23 @@ def translate():
         return jsonify({'error': '請輸入要翻譯的文本'}), 400
     
     try:
+<<<<<<< HEAD
         result = translate_poem(text, target_language)
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'翻譯失敗: {str(e)}'}), 500
+=======
+        req_target = data.get('target_language') or 'de'
+        result = translate_poem(text, target_language=req_target)
+        return jsonify({
+            'original': result.get('original', text),
+            'modern_chinese': result.get('modern_chinese', ''),
+            'target_language': result.get('target_language', ''),
+            'translated': result.get('translated', '')
+        })
+    except Exception:
+        return jsonify({'error': '翻譯服務發生錯誤'}), 500
+>>>>>>> backup/frontend-before-push
 
 
 @app.route('/api/analyze-emotion', methods=['POST'])
@@ -67,8 +137,24 @@ def translate_and_analyze():
         return jsonify({'error': '請輸入要翻譯的文本'}), 400
     
     try:
-        result = translate_and_analyze_emotion(text, target_language)
-        return jsonify(result)
+        translation_result = translate_poem(text, target_language=target_language)
+
+        analyzer = EmotionAnalyzer()
+        emotion_result = analyzer.analyze_emotion_with_details(
+            translation_result.get('modern_chinese', ''),
+            language='zh-Hans'
+        )
+
+        return jsonify({
+            'success': True,
+            'translation': {
+                'original': translation_result.get('original', text),
+                'modern_chinese': translation_result.get('modern_chinese', ''),
+                'target_language': translation_result.get('target_language', target_language),
+                'translated': translation_result.get('translated', '')
+            },
+            'emotion_analysis': emotion_result
+        })
     except Exception as e:
         return jsonify({'error': f'翻譯和分析失敗: {str(e)}'}), 500
 
