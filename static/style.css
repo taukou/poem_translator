@@ -132,13 +132,13 @@ textarea:focus {
 }
 
 .btn-copy {
-    background-color: #4caf50;
+    background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
     color: white;
     width: 100%;
 }
 
 .btn-copy:hover {
-    background-color: #45a049;
+    background: linear-gradient(135deg, #64b5f6 0%, #1976d2 100%);
 }
 
 .btn:disabled {

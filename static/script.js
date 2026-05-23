@@ -4,7 +4,10 @@ const translateBtn = document.getElementById('translateBtn');
 const clearBtn = document.getElementById('clearBtn');
 const copyBtn = document.getElementById('copyBtn');
 const outputSection = document.getElementById('outputSection');
+const modernText = document.getElementById('modernText');
+const targetLang = document.getElementById('targetLang');
 const outputText = document.getElementById('outputText');
+const targetSelect = document.getElementById('targetSelect');
 const errorMessage = document.getElementById('errorMessage');
 const spinner = document.getElementById('loadingSpinner');
 
@@ -26,7 +29,7 @@ async function translate() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({ text: text, target_language: targetSelect ? targetSelect.value : 'de' })
         });
 
         if (!response.ok) {
@@ -35,7 +38,7 @@ async function translate() {
         }
 
         const data = await response.json();
-        displayResult(data.translated);
+        displayResult(data);
 
     } catch (error) {
         showError(error.message || '發生錯誤，請重試');
@@ -67,8 +70,10 @@ function copyText() {
 }
 
 // 顯示結果
-function displayResult(result) {
-    outputText.textContent = result;
+function displayResult(data) {
+    modernText.textContent = data.modern_chinese || '';
+    targetLang.textContent = data.target_language || '';
+    outputText.textContent = data.translated || '';
     outputSection.style.display = 'block';
     outputText.scrollIntoView({ behavior: 'smooth' });
 }
@@ -135,4 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(() => {
             showError('無法連接到服務器');
         });
+    // example buttons
+    const example1 = document.getElementById('example1');
+    const example2 = document.getElementById('example2');
+    const example3 = document.getElementById('example3');
+
+    if (example1) example1.addEventListener('click', () => {
+        inputText.value = '獨坐幽篁裡，彈琴復長嘯。深林人不知，明月來相照。';
+    });
+    if (example2) example2.addEventListener('click', () => {
+        inputText.value = '國破山河在，城春草木深。感時花濺淚，恨別鳥驚心。烽火連三月，家書抵萬金。白頭搔更短，渾欲不勝簪。';
+    });
+    if (example3) example3.addEventListener('click', () => {
+        inputText.value = '床前明月光，疑是地上霜。舉頭望明月，低頭思故鄉。';
+    });
 });
