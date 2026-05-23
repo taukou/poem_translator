@@ -63,21 +63,17 @@ pip install -r requirements.txt
 
 ### 3. 配置密鑰
 
-先把 `config.ini.example` 複製成 `config.ini`，再填入你的 Azure 密鑰：
-
-```bash
-copy config.ini.example config.ini
-```
-
-然後編輯 `config.ini`：
+編輯 `config.ini`：
 
 ```ini
-[API]
-api_key = your_actual_api_key_here
 
-[AZURE]
-azure_key = your_actual_azure_key_here
-azure_endpoint = https://your-region.api.cognitive.microsoft.com/
+[AzureTranslator]
+Key = your key
+Region = your region
+Endpoint = your endpoint
+[AZURELANGUAGE]
+AZURE_LANGUAGE_KEY = your key
+AZURE_LANGUAGE_ENDPOINT = your endpoint
 ```
 
 ## 🚀 運行應用
@@ -164,25 +160,6 @@ python app.py
 ### `/api/health` (GET)
 健康檢查端點
 
-## ⚙️ 配置說明
-
-### config.ini 配置文件
-
-```ini
-[API]
-api_key = 你的API密鑰
-
-[AZURE]
-azure_key = 你的Azure翻譯密鑰
-azure_endpoint = Azure服務端點
-
-[DATABASE]
-db_host = 數據庫主機
-db_port = 數據庫端口
-db_name = 數據庫名稱
-```
-
-## 🔐 安全建議
 
 ⚠️ **重要**：
 - 不要將 `config.ini` 提交到版本控制系統
@@ -201,6 +178,21 @@ db_name = 數據庫名稱
 - azure-cognitiveservices-language-textanalytics - Azure文本分析
 - pyttsx3 - 文本轉語音
 - requests - HTTP請求庫
+
+此外，專案中也使用了新版 Azure SDK 套件（請確保在 `requirements.txt` 中列出）：
+
+- azure-ai-textanalytics - Azure Text Analytics（推薦使用，為新版 SDK，通常取代 `azure-cognitiveservices-language-textanalytics`）
+- azure-ai-translation-text - Azure 翻譯服務（Translator）
+- azure-core - Azure 共用核心庫（新版 Azure SDK 依賴）
+
+說明：如果你同時看到 `azure-cognitiveservices-language-textanalytics` 與 `azure-ai-textanalytics`，請注意前者為舊版套件，建議以 `azure-ai-textanalytics` 為主，或在 README 中註明替代關係。
+
+## 🔧 新增 API 與前端變更
+
+- **新 API：** `/api/translate-and-analyze` — 一次回傳翻譯與情緒分析結果（JSON），方便前端一次請求取得全部顯示內容。
+- **新 API：** `/api/poems` 與 `/api/poems/<id>` — 提供唐詩清單與單首詩的內容，供前端下拉選擇使用。
+- **前端變更：** UI 改為雙欄（輸入在左、結果在右）；右側預設三張卡片顯示「白話文」「翻譯」「情緒分析」；新增下拉選單 `poemSelect`，可從 `唐詩三百首.txt` 選擇詩名並自動填入輸入區。
+- **注意事項：** README 先前範例使用的 config section 名稱（如 `[AZURE]` 或 `[API]`）與程式實際讀取的 `[AzureTranslator]` / `[AZURELANGUAGE]` 可能不一致，請統一或在文件中標註對應關係以避免初始化失敗錯誤。
 
 ## 💡 核心功能規劃
 
