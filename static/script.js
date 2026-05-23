@@ -4,6 +4,7 @@ const translateBtn = document.getElementById('translateBtn');
 const clearBtn = document.getElementById('clearBtn');
 const copyBtn = document.getElementById('copyBtn');
 const outputSection = document.getElementById('outputSection');
+const originalPoem = document.getElementById('originalPoem');
 const modernText = document.getElementById('modernText');
 const targetLang = document.getElementById('targetLang');
 const outputText = document.getElementById('outputText');
@@ -13,8 +14,13 @@ const errorMessage = document.getElementById('errorMessage');
 const spinner = document.getElementById('loadingSpinner');
 const emotionSummary = document.getElementById('emotionSummary');
 const emotionSentences = document.getElementById('emotionSentences');
+const contentExplanation = document.getElementById('contentExplanation');
+const authorIntro = document.getElementById('authorIntro');
 
 let poemCatalog = [];
+let currentWordAnnotations = [];
+let currentOriginalText = '';
+let tooltipHideTimer = null;
 
 function setHidden(element, shouldHide) {
     if (!element) {
@@ -61,6 +67,172 @@ function fillPoemText(poemId) {
 
     inputText.value = poem.text || '';
     hideError();
+}
+
+function escapeHTML(value) {
+    return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+function escapeRegExp(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function findAnnotation(word) {
+    return currentWordAnnotations.find((annotation) => String(annotation.word || '') === String(word || ''));
+}
+
+function renderAnnotatedLine(line) {
+    const annotations = [...currentWordAnnotations]
+        .map((annotation) => String(annotation.word || '').trim())
+        .filter(Boolean)
+        .sort((a, b) => b.length - a.length);
+
+    if (!annotations.length) {
+        return escapeHTML(line);
+    }
+
+    let html = escapeHTML(line);
+    const markers = [];
+
+    annotations.forEach((word, index) => {
+        const marker = `__POEM_WORD_${index}__`;
+        const regex = new RegExp(escapeRegExp(word), 'g');
+        if (regex.test(html)) {
+            html = html.replace(regex, marker);
+            markers.push({ marker, word });
+        }
+    });
+
+    markers.forEach(({ marker, word }) => {
+        html = html.replaceAll(
+            marker,
+            `<span class="poem-word" data-word="${escapeHTML(word)}">${escapeHTML(word)}</span>`
+        );
+    });
+
+    return html;
+}
+
+function renderOriginalPoem(text) {
+    if (!originalPoem) {
+        return;
+    }
+
+    const existingTooltip = document.querySelector('.word-tooltip');
+    if (existingTooltip) {
+        existingTooltip.remove();
+    }
+    if (tooltipHideTimer) {
+        clearTimeout(tooltipHideTimer);
+        tooltipHideTimer = null;
+    }
+
+    const sourceText = String(text || '').trim();
+
+    if (!sourceText) {
+        originalPoem.classList.add('placeholder-text');
+        originalPoem.textContent = '翻譯後，這裡會顯示原文。把滑鼠移到詞語上，就能看到 AI 註釋。';
+        return;
+    }
+
+    const lines = sourceText.split(/\r?\n/).filter(Boolean);
+    const html = lines.length
+        ? lines.map((line) => `<div class="poem-line">${renderAnnotatedLine(line)}</div>`).join('')
+        : `<div class="poem-line">${renderAnnotatedLine(sourceText)}</div>`;
+
+    originalPoem.classList.remove('placeholder-text');
+    originalPoem.innerHTML = html;
+    setupPoemHover();
+}
+
+function setupPoemHover() {
+    if (!originalPoem) {
+        return;
+    }
+
+    originalPoem.querySelectorAll('.poem-word').forEach((wordEl) => {
+        wordEl.addEventListener('mouseenter', showWordTooltip);
+        wordEl.addEventListener('mouseleave', hideWordTooltipSoon);
+    });
+}
+
+function showWordTooltip(event) {
+    const wordEl = event.currentTarget;
+    const word = wordEl.getAttribute('data-word');
+    const annotation = findAnnotation(word);
+
+    if (!annotation) {
+        return;
+    }
+
+    if (tooltipHideTimer) {
+        clearTimeout(tooltipHideTimer);
+        tooltipHideTimer = null;
+    }
+
+    let tooltip = document.querySelector('.word-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.className = 'word-tooltip';
+        document.body.appendChild(tooltip);
+    }
+
+    tooltip.innerHTML = `
+        <div class="tooltip-word">${escapeHTML(annotation.word || word)}</div>
+        <div class="annotation-meaning">
+            <span class="label">釋義：</span>
+            <span>${escapeHTML(annotation.meaning || '無')}</span>
+        </div>
+        ${annotation.usage ? `
+        <div class="annotation-usage">
+            <span class="label">用法：</span>
+            <span>${escapeHTML(annotation.usage)}</span>
+        </div>
+        ` : ''}
+    `;
+
+    const rect = wordEl.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    let left = rect.right + 12;
+    let top = rect.top - (tooltipRect.height - rect.height) / 2;
+
+    if (left + tooltipRect.width > window.innerWidth) {
+        left = rect.left - tooltipRect.width - 12;
+    }
+    if (left < 12) {
+        left = 12;
+    }
+    if (top < 12) {
+        top = 12;
+    } else if (top + tooltipRect.height > window.innerHeight - 12) {
+        top = window.innerHeight - tooltipRect.height - 12;
+    }
+
+    tooltip.style.position = 'fixed';
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.zIndex = '10000';
+    tooltip.dataset.visible = '1';
+}
+
+function hideWordTooltipSoon() {
+    if (tooltipHideTimer) {
+        clearTimeout(tooltipHideTimer);
+    }
+
+    tooltipHideTimer = setTimeout(() => {
+        const tooltip = document.querySelector('.word-tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
+        tooltipHideTimer = null;
+    }, 120);
 }
 
 function renderEmotionAnalysis(data) {
@@ -151,10 +323,47 @@ async function translate() {
 
         const data = await response.json();
         displayResult(data);
+        
+        // 獲取 AI 詳細分析
+        await fetchAIAnalysis(text);
     } catch (error) {
         showError(error.message || '發生錯誤，請重試');
     } finally {
         showLoading(false);
+    }
+}
+
+// 獲取 AI 詳細分析
+async function fetchAIAnalysis(text) {
+    try {
+        const response = await fetch('/api/translate-detailed', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text,
+                target_language: 'zh-Hant'
+            })
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            const message = data.error || `AI 註釋失敗（HTTP ${response.status}）`;
+            showError(message);
+            displayAIAnalysis({ error: message });
+            return;
+        }
+
+        const data = await response.json();
+        if (data.error) {
+            showError(data.error);
+        }
+        displayAIAnalysis(data);
+    } catch (error) {
+        const message = `AI 註釋失敗：${error.message}`;
+        showError(message);
+        displayAIAnalysis({ error: message });
     }
 }
 
@@ -164,9 +373,30 @@ function clearText() {
     if (poemSelect) {
         poemSelect.value = '';
     }
+    currentOriginalText = '';
+    currentWordAnnotations = [];
+    if (tooltipHideTimer) {
+        clearTimeout(tooltipHideTimer);
+        tooltipHideTimer = null;
+    }
+    if (document.querySelector('.word-tooltip')) {
+        document.querySelector('.word-tooltip').remove();
+    }
+    if (originalPoem) {
+        originalPoem.textContent = '翻譯後，這裡會顯示原文。把滑鼠移到詞語上，就能看到 AI 註釋。';
+        originalPoem.classList.add('placeholder-text');
+    }
     modernText.textContent = '輸入古文後，這裡會顯示白話文解釋。';
+    modernText.classList.add('placeholder-text');
     targetLang.textContent = '';
     outputText.textContent = '翻譯完成後，這裡會顯示目標語言的翻譯結果。';
+    outputText.classList.add('placeholder-text');
+    
+    contentExplanation.textContent = '進行翻譯後，這裡會顯示詩文的詳細解釋。';
+    contentExplanation.classList.add('placeholder-text');
+    authorIntro.textContent = '進行翻譯後，這裡會顯示作者的生平和介紹。';
+    authorIntro.classList.add('placeholder-text');
+    
     if (emotionSummary) {
         emotionSummary.classList.add('empty-state');
         emotionSummary.textContent = '等待分析結果。';
@@ -195,12 +425,90 @@ function copyText() {
 function displayResult(data) {
     const translation = data.translation || data;
     const emotionAnalysis = data.emotion_analysis || {};
+    currentOriginalText = translation.original || inputText.value || '';
+    currentWordAnnotations = [];
 
+    renderOriginalPoem(currentOriginalText);
     modernText.textContent = translation.modern_chinese || '';
     targetLang.textContent = translation.target_language || '';
     outputText.textContent = translation.translated || '';
     renderEmotionAnalysis(emotionAnalysis);
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// 顯示 AI 詳細分析
+function displayAIAnalysis(data) {
+    if (!data || data.error) {
+        const message = (data && data.error) ? data.error : 'AI 註釋目前沒有資料';
+        if (contentExplanation) {
+            contentExplanation.classList.remove('placeholder-text');
+            contentExplanation.textContent = message;
+        }
+        if (authorIntro) {
+            authorIntro.classList.remove('placeholder-text');
+            authorIntro.textContent = message;
+        }
+        return;
+    }
+
+    if (!data.analysis) {
+        return;
+    }
+
+    const analysis = data.analysis || {};
+    
+    // 顯示內容解釋
+    if (analysis.content_explanation) {
+        const contentExpl = analysis.content_explanation;
+        let contentHTML = `
+            <div class="content-explanation">
+                <div class="explanation-section">
+                    <h4>整體含義</h4>
+                    <p>${contentExpl.overall_meaning || ''}</p>
+                </div>
+                <div class="explanation-section">
+                    <h4>核心主旨</h4>
+                    <p>${contentExpl.central_theme || ''}</p>
+                </div>
+                <div class="explanation-section">
+                    <h4>意境</h4>
+                    <p>${contentExpl.artistic_conception || ''}</p>
+                </div>
+                ${contentExpl.line_by_line_analysis && contentExpl.line_by_line_analysis.length ? `
+                <div class="explanation-section">
+                    <h4>逐句分析</h4>
+                    <ul class="line-analysis">
+                        ${contentExpl.line_by_line_analysis.map((line, idx) => `<li><strong>第 ${idx + 1} 句：</strong> ${line}</li>`).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+            </div>
+        `;
+        contentExplanation.innerHTML = contentHTML;
+        contentExplanation.classList.remove('placeholder-text');
+    }
+    
+    if (analysis.word_annotations && Array.isArray(analysis.word_annotations)) {
+        currentWordAnnotations = analysis.word_annotations;
+        renderOriginalPoem(currentOriginalText);
+    }
+    
+    // 顯示作者介紹
+    if (analysis.author_introduction) {
+        const author = analysis.author_introduction;
+        let authorHTML = `
+            <div class="author-intro">
+                ${author.name ? `<div class="author-name"><strong>作者：</strong> ${author.name}</div>` : ''}
+                ${author.period ? `<div class="author-period"><strong>時代：</strong> ${author.period}</div>` : ''}
+                ${author.biography ? `<div class="author-biography"><strong>生平：</strong> ${author.biography}</div>` : ''}
+                ${author.literary_style ? `<div class="author-style"><strong>文學風格：</strong> ${author.literary_style}</div>` : ''}
+                ${author.achievements ? `<div class="author-achievements"><strong>成就：</strong> ${author.achievements}</div>` : ''}
+                ${author.poem_status ? `<div class="author-poem-status"><strong>本詩地位：</strong> ${author.poem_status}</div>` : ''}
+            </div>
+        `;
+        authorIntro.innerHTML = authorHTML;
+        authorIntro.classList.remove('placeholder-text');
+    }
 }
 
 // 顯示錯誤訊息
@@ -288,16 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-    fetch('/api/health')
-        .then(response => {
-            if (!response.ok) {
-                showError('服務連接失敗，請稍後重試');
-            }
-        })
-        .catch(() => {
-            showError('無法連接到服務器');
-        });
-
+    // 設置 example 按鈕事件監聽器
     const example1 = document.getElementById('example1');
     const example2 = document.getElementById('example2');
     const example3 = document.getElementById('example3');
@@ -320,3 +619,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
