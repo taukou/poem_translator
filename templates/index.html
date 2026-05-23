@@ -7,68 +7,104 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Poem Translator</h1>
-            <p class="subtitle">將古詩詞轉為現代文</p>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Poem Translator</p>
+                <h1>古詩翻譯與情緒分析</h1>
+            </div>
         </header>
 
-        <main>
-            <div class="translator-box">
-                <div class="input-section">
-                    <label for="inputText">輸入古文</label>
-                    <textarea 
-                        id="inputText" 
-                        placeholder="請輸入要翻譯的古詩詞..." 
-                        rows="6"
-                    ></textarea>
-                    <label for="targetSelect" style="margin-top:10px;">選擇目標語言</label>
-                    <select id="targetSelect" style="padding:8px;border-radius:6px;border:1px solid #d0e7ff;">
-                        <option value="de" selected>德文 (de)</option>
-                        <option value="en">英文 (en)</option>
-                        <option value="fr">法文 (fr)</option>
-                        <option value="jp">日文 (ja)</option>
+        <main class="layout">
+            <section class="panel panel-input">
+                <div class="panel-header">
+                    <h2>輸入內容</h2>
+                    <p>貼上古詩詞後，系統會先翻譯成白話中文，再分析情緒。</p>
+                </div>
+
+                <div class="poem-picker">
+                    <label for="poemSelect">從唐詩三百首選擇詩名</label>
+                    <select id="poemSelect">
+                        <option value="">載入詩詞清單中...</option>
                     </select>
                 </div>
 
+                <label for="inputText">輸入古文</label>
+                <textarea
+                    id="inputText"
+                    placeholder="選擇詩名後會自動帶入，或直接輸入要翻譯的古詩詞..."
+                    rows="12"
+                ></textarea>
+
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="targetSelect">選擇目標語言</label>
+                        <select id="targetSelect">
+                            <option value="de" selected>德文 (de)</option>
+                            <option value="en">英文 (en)</option>
+                            <option value="fr">法文 (fr)</option>
+                            <option value="ja">日文 (ja)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="button-section">
-                    <button id="translateBtn" class="btn btn-primary">翻譯</button>
+                    <button id="translateBtn" class="btn btn-primary">翻譯並分析</button>
                     <button id="clearBtn" class="btn btn-secondary">清除</button>
                 </div>
 
                 <div id="loadingSpinner" class="spinner hidden"></div>
 
-                <div class="output-section" id="outputSection" style="display: none;">
-                    <label>白話文</label>
-                    <div id="modernText" class="output-text"></div>
-                    <label>目標語言</label>
-                    <div id="targetLang" class="output-text" style="min-height:40px;"></div>
-                    <label>翻譯結果</label>
-                    <div id="outputText" class="output-text"></div>
-                    <button id="copyBtn" class="btn btn-copy">複製結果</button>
+                <div class="example-card">
+                    <h3>範例</h3>
+                    <p>點擊快速填入示例詩句。</p>
+                    <div class="example-buttons">
+                        <button class="btn btn-secondary" id="example1">竹里館</button>
+                        <button class="btn btn-secondary" id="example2">春望</button>
+                        <button class="btn btn-secondary" id="example3">靜夜思</button>
+                    </div>
                 </div>
 
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
-            </div>
+                <div id="errorMessage" class="error-message hidden"></div>
+            </section>
 
-            <footer class="info-box">
-                <h3>使用說明</h3>
-                <ol>
-                    <li>在「輸入古文」欄貼上古詩詞。</li>
-                    <li>從「選擇目標語言」下拉選擇目標語言（預設：德文 de）。</li>
-                    <li>點擊「翻譯」或按 <kbd>Ctrl+Enter</kbd>，系統會先將古文轉為白話中文，再翻譯成目標語言。</li>
-                    <li>結果會顯示：原文、白話中文、目標語言、翻譯結果；點「複製結果」可複製翻譯。</li>
-                </ol>
-
-                <h4>範例（點擊快速填入）</h4>
-                <p>按下下列按鈕會把範例詩句填入並自動開始翻譯：</p>
-                <div class="example-buttons" style="display:flex;gap:8px;margin-bottom:12px;">
-                    <button class="btn btn-secondary" id="example1">範例：竹里館</button>
-                    <button class="btn btn-secondary" id="example2">範例：春望</button>
-                    <button class="btn btn-secondary" id="example3">範例：靜夜思</button>
+            <section class="panel panel-output">
+                <div class="panel-header">
+                    <h2>輸出結果</h2>
                 </div>
 
-                
+                <div id="outputSection" class="output-grid">
+                    <article class="result-card">
+                        <div class="result-card-header">
+                            <h3>白話文解釋</h3>
+                            <span class="result-tag">Modern Chinese</span>
+                        </div>
+                        <div id="modernText" class="output-text placeholder-text">輸入古文後，這裡會顯示白話文解釋。</div>
+                    </article>
+
+                    <article class="result-card">
+                        <div class="result-card-header">
+                            <h3>翻譯結果</h3>
+                            <span id="targetLang" class="result-tag"></span>
+                        </div>
+                        <div id="outputText" class="output-text placeholder-text">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
+                        <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
+                    </article>
+
+                    <article class="result-card emotion-card">
+                        <div class="result-card-header">
+                            <h3>情緒分析</h3>
+                            <span class="result-tag">Emotion</span>
+                        </div>
+                        <div id="emotionSummary" class="emotion-summary empty-state">
+                            等待分析結果。
+                        </div>
+                        <div id="emotionSentences" class="emotion-sentences"></div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
