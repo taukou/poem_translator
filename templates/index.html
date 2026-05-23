@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>詩詞翻譯器</title>
+    <title>Poem Translator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎋 詩詞翻譯器</h1>
+            <h1>Poem Translator</h1>
             <p class="subtitle">將古詩詞轉為現代文</p>
         </header>
 
@@ -22,6 +22,14 @@
                         placeholder="請輸入要翻譯的古詩詞..." 
                         rows="6"
                     ></textarea>
+                    <label for="targetSelect" style="margin-top:10px;">選擇目標語言</label>
+                    <select id="targetSelect" style="padding:8px;border-radius:6px;border:1px solid #d0e7ff;">
+                        <option value="de" selected>德文 (de)</option>
+                        <option value="en">英文 (en)</option>
+                        <option value="fr">法文 (fr)</option>
+                        <option value="jp">日文 (ja)</option>
+                        <option value="zh-Hant">繁體中文 (zh-Hant)</option>
+                    </select>
                 </div>
 
                 <div class="button-section">
@@ -32,6 +40,10 @@
                 <div id="loadingSpinner" class="spinner hidden"></div>
 
                 <div class="output-section" id="outputSection" style="display: none;">
+                    <label>白話中文</label>
+                    <div id="modernText" class="output-text"></div>
+                    <label>目標語言</label>
+                    <div id="targetLang" class="output-text" style="min-height:40px;"></div>
                     <label>翻譯結果</label>
                     <div id="outputText" class="output-text"></div>
                     <button id="copyBtn" class="btn btn-copy">複製結果</button>
@@ -43,9 +55,9 @@
             <footer class="info-box">
                 <h3>使用說明</h3>
                 <ul>
-                    <li>在左側輸入框輸入古詩詞</li>
+                    <li>在上方輸入框輸入古詩詞</li>
                     <li>點擊「翻譯」按鈕進行翻譯</li>
-                    <li>翻譯結果將顯示在右側</li>
+                    <li>翻譯結果將顯示在下方</li>
                     <li>可以複製結果到剪貼板</li>
                 </ul>
             </footer>

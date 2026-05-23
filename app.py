@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import configparser
 import os
+from utils.translator import translate_poem
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -29,14 +30,17 @@ def translate():
     if not text:
         return jsonify({'error': '請輸入要翻譯的文本'}), 400
     
-    # 這裡添加你的翻譯邏輯
-    # 例如調用Azure Translator或其他翻譯服務
-    translated_text = f"[翻譯結果] {text}"
-    
-    return jsonify({
-        'original': text,
-        'translated': translated_text
-    })
+    try:
+        req_target = data.get('target_language') or 'de'
+        result = translate_poem(text, target_language=req_target)
+        return jsonify({
+            'original': result.get('original', text),
+            'modern_chinese': result.get('modern_chinese', ''),
+            'target_language': result.get('target_language', ''),
+            'translated': result.get('translated', '')
+        })
+    except Exception as e:
+        return jsonify({'error': '翻譯服務發生錯誤'}), 500
 
 
 @app.route('/api/health', methods=['GET'])

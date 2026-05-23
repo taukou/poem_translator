@@ -4,7 +4,10 @@ const translateBtn = document.getElementById('translateBtn');
 const clearBtn = document.getElementById('clearBtn');
 const copyBtn = document.getElementById('copyBtn');
 const outputSection = document.getElementById('outputSection');
+const modernText = document.getElementById('modernText');
+const targetLang = document.getElementById('targetLang');
 const outputText = document.getElementById('outputText');
+const targetSelect = document.getElementById('targetSelect');
 const errorMessage = document.getElementById('errorMessage');
 const spinner = document.getElementById('loadingSpinner');
 
@@ -26,7 +29,7 @@ async function translate() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({ text: text, target_language: targetSelect ? targetSelect.value : 'de' })
         });
 
         if (!response.ok) {
@@ -35,7 +38,7 @@ async function translate() {
         }
 
         const data = await response.json();
-        displayResult(data.translated);
+        displayResult(data);
 
     } catch (error) {
         showError(error.message || '發生錯誤，請重試');
@@ -67,8 +70,10 @@ function copyText() {
 }
 
 // 顯示結果
-function displayResult(result) {
-    outputText.textContent = result;
+function displayResult(data) {
+    modernText.textContent = data.modern_chinese || '';
+    targetLang.textContent = data.target_language || '';
+    outputText.textContent = data.translated || '';
     outputSection.style.display = 'block';
     outputText.scrollIntoView({ behavior: 'smooth' });
 }

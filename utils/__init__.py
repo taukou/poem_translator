@@ -1,2 +1,1 @@
-
-from .translator import translate_text, translate_response
+from .translator import translate_poem, classical_to_modern_chinese
