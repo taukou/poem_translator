@@ -19,7 +19,7 @@ NLP期末專項 - 一個基於Flask框架的古詩詞翻譯應用，集成情緒
 ```
 poem_translator/
 ├── app.py                 # Flask應用主文件
-├── config.ini            # 配置文件（API密鑰、Azure密鑰）
+├── config.ini.example    # 配置範本（需複製為 config.ini 後填入密鑰）
 ├── requirements.txt      # Python依賴
 ├── .gitignore           # Git忽略文件
 ├── .env.example         # 環境變量示例
@@ -63,7 +63,13 @@ pip install -r requirements.txt
 
 ### 3. 配置密鑰
 
-編輯 `config.ini` 文件，填入你的API密鑰和Azure密鑰：
+先把 `config.ini.example` 複製成 `config.ini`，再填入你的 Azure 密鑰：
+
+```bash
+copy config.ini.example config.ini
+```
+
+然後編輯 `config.ini`：
 
 ```ini
 [API]

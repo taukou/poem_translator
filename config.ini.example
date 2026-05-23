@@ -1,0 +1,4 @@
+[AzureTranslator]
+Key = your_azure_key_here
+Region = eastus2
+Endpoint = https://api.cognitive.microsofttranslator.com/
