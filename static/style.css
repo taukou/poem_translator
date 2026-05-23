@@ -263,7 +263,9 @@ select:focus {
 }
 
 .panel-insights {
+    margin-top: 22px;
     grid-column: 1 / -1;
+    width: 100%;
 }
 
 .output-grid {
@@ -280,6 +282,18 @@ select:focus {
     display: grid;
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
     gap: 18px;
+}
+
+.output-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.output-controls .btn {
+    flex: 1;
+    margin-top: 0;
 }
 
 .result-card {
@@ -347,6 +361,41 @@ select:focus {
     background: rgba(75, 123, 236, 0.16);
     color: #2451c9;
     box-shadow: 0 0 0 2px rgba(75, 123, 236, 0.1);
+}
+
+/* Tooltip for word annotations (created dynamically by script.js) */
+.word-tooltip {
+    position: fixed;
+    z-index: 10000;
+    max-width: 360px;
+    background: #ffffff;
+    color: var(--text);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 18px 48px rgba(5, 15, 31, 0.3);
+    border: 1px solid rgba(16, 32, 51, 0.06);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    pointer-events: auto;
+}
+
+.word-tooltip .tooltip-word {
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--accent-2);
+}
+
+.word-tooltip .annotation-meaning,
+.word-tooltip .annotation-usage {
+    font-size: 0.92rem;
+    color: var(--text);
+    margin-top: 6px;
+}
+
+.word-tooltip .label {
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-right: 6px;
 }
 
 .translation-stack,
@@ -516,6 +565,10 @@ select:focus {
     .ai-supplement-card .output-text {
         overflow: visible;
         max-height: none;
+    }
+
+    .lower-grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -769,4 +822,41 @@ select:focus {
     .lower-grid {
         gap: 14px;
     }
+}
+
+/* 語音播放區塊樣式
+.btn-speech {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    flex: 2;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-speech:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
+}
+
+.emotion-select {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    font-size: 1em;
+    outline: none;
+    cursor: pointer;
+    background-color: white;
+    font-family: inherit;
+    flex: 1;
+    transition: border-color 0.3s ease;
+}
+
+.emotion-select:focus {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.16);
 }

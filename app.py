@@ -5,6 +5,7 @@ import os
 import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
+from utils.speech_generator import generate_emotional_speech
 from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions, compare_poems
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -208,6 +209,35 @@ def translate_and_analyze_route():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'翻譯和分析失敗: {str(e)}'}), 500
+
+
+@app.route('/api/generate-speech', methods=['POST'])
+def generate_speech():
+    """情感語音合成端點 - 根據情緒調整音調和語速"""
+    data = request.get_json()
+    
+    # 接收前端傳來的參數，並設定預設值
+    text = data.get('text', '').strip()
+    emotion = data.get('emotion', '平')
+    speed = float(data.get('speed', 1.0))
+    pitch = float(data.get('pitch', 1.0))
+    
+    if not text:
+        return jsonify({'error': '請輸入要轉換的文本'}), 400
+        
+    try:
+        # 呼叫我們剛寫好的模組
+        result = generate_emotional_speech(text, emotion, speed, pitch)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'error': f'語音合成失敗: {str(e)}'}), 500
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    """健康檢查"""
+    return jsonify({'status': 'ok'})
+
 
 @app.errorhandler(404)
 def not_found(error):

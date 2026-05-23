@@ -61,9 +61,7 @@
                         <button class="btn btn-secondary" id="example2">範例二</button>
                         <button class="btn btn-secondary" id="example3">範例三</button>
                     </div>
-                </div>
-
-                <div id="errorMessage" class="error-message hidden"></div>
+                </div> <div id="errorMessage" class="error-message hidden"></div>
             </section>
 
             <section class="panel panel-output">
@@ -98,10 +96,15 @@
                             </div>
                         </div>
 
-                        <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
-                    </article>
+                        <div class="output-controls">
+                            <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
+                            <button id="playBtn" class="btn btn-speech">朗讀原文</button>
+                        </div>
 
+                        <audio id="audioPlayer" hidden></audio>
+                    </article>
                 </div>
+
             </section>
 
             <section class="panel panel-insights">
@@ -112,7 +115,7 @@
                 <div class="lower-grid">
                     <article class="result-card emotion-card">
                         <div class="result-card-header">
-                            <h3>情緒儀表板</h3>
+                            <h3>情緒分析</h3>
                             <span class="result-tag">Emotion</span>
                         </div>
                         <div id="emotionSummary" class="emotion-summary empty-state">等待分析結果。</div>
