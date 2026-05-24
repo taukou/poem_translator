@@ -12,7 +12,6 @@
             <div class="hero-copy">
                 <p class="eyebrow">Poem Translator</p>
                 <h1>古詩翻譯與 AI 註釋</h1>
-                <p class="subtitle">左側負責輸入與語言選擇，右上區塊顯示原文與翻譯，底下獨立區塊顯示情緒儀表板與 AI 補充。把滑鼠移到原文詞語上，就能看到對應註釋。</p>
             </div>
         </header>
 
@@ -20,7 +19,6 @@
             <section class="panel panel-input">
                 <div class="panel-header">
                     <h2>輸入區</h2>
-                    <p>可以直接貼上古詩，也可以從範例選取。右上會顯示原文與翻譯，底下則是獨立分析區。</p>
                 </div>
 
                 <div class="poem-picker">
@@ -58,7 +56,6 @@
 
                 <div class="example-card">
                     <h3>範例</h3>
-                    <p>快速載入常見詩句，方便你直接測試翻譯與註釋。</p>
                     <div class="example-buttons">
                         <button class="btn btn-secondary" id="example1">範例一</button>
                         <button class="btn btn-secondary" id="example2">範例二</button>
@@ -76,7 +73,7 @@
                     <article class="result-card poem-card">
                         <div class="result-card-header">
                             <h3>古詩原文</h3>
-                            <span class="result-tag">Hover 詞語註釋</span>
+                            <span class="result-tag">詞語註釋</span>
                         </div>
                         <div id="originalPoem" class="poem-text placeholder-text">翻譯後，這裡會顯示原文。把滑鼠移到詞語上，就能看到 AI 註釋。</div>
                     </article>
@@ -99,19 +96,26 @@
                             </div>
                         </div>
 
-                        <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
-                        <div id="outputText" class="output-text placeholder-text" style="margin-bottom: 15px;">翻譯完成後，這裡會顯示目標語言的翻譯結果。</div>
-                        
-                        <div class="output-controls" style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button id="copyBtn" class="btn btn-copy" style="flex: 1; margin-top: 0;">📋 複製結果</button>
-                            <button id="playBtn" class="btn btn-speech" style="flex: 1;">🔊 朗讀原文</button>
+                        <div class="output-controls">
+                            <button id="copyBtn" class="btn btn-copy">複製翻譯結果</button>
+                            <button id="playBtn" class="btn btn-speech">朗讀原文</button>
                         </div>
-                        
-                        <audio id="audioPlayer" style="display: none;"></audio>
+
+                        <audio id="audioPlayer" hidden></audio>
                     </article>
+                </div>
+
+            </section>
+
+            <section class="panel panel-insights">
+                <div class="panel-header">
+                    <h2>分析區</h2>
+                </div>
+
+                <div class="lower-grid">
                     <article class="result-card emotion-card">
                         <div class="result-card-header">
-                            <h3>情緒儀表板</h3>
+                            <h3>情緒分析</h3>
                             <span class="result-tag">Emotion</span>
                         </div>
                         <div id="emotionSummary" class="emotion-summary empty-state">等待分析結果。</div>

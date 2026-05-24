@@ -455,14 +455,13 @@ function displayResult(data) {
 // 顯示 AI 詳細分析
 function displayAIAnalysis(data) {
     if (!data || data.error) {
-        const message = (data && data.error) ? data.error : 'AI 註釋目前沒有資料';
         if (contentExplanation) {
-            contentExplanation.classList.remove('placeholder-text');
-            contentExplanation.textContent = message;
+            contentExplanation.classList.add('placeholder-text');
+            contentExplanation.textContent = '進行翻譯後，這裡會顯示詩文的詳細解釋。';
         }
         if (authorIntro) {
-            authorIntro.classList.remove('placeholder-text');
-            authorIntro.textContent = message;
+            authorIntro.classList.add('placeholder-text');
+            authorIntro.textContent = '進行翻譯後，這裡會顯示作者的生平和介紹。';
         }
         return;
     }
@@ -529,8 +528,8 @@ function displayAIAnalysis(data) {
 
 // 顯示錯誤訊息
 function showError(message) {
-    errorMessage.textContent = message;
-    setHidden(errorMessage, false);
+    hideError();
+    window.alert(message || '發生錯誤，請稍後再試');
 }
 
 // 隱藏錯誤訊息
@@ -592,7 +591,7 @@ async function playSpeech() {
 
     try {
         playBtn.disabled = true;
-        playBtn.textContent = '🗣️ 合成語音中...';
+        playBtn.textContent = '合成語音中...';
         hideError();
 
         const speechRes = await fetch('/api/generate-speech', {
@@ -616,20 +615,17 @@ async function playSpeech() {
         audioPlayer.src = speechData.audio_url;
         audioPlayer.play();
         
-        showSuccess(`🎵 已自動偵測情緒「${emotion}」，開始朗讀原文`);
+        showSuccess(`已自動偵測情緒「${emotion}」，開始朗讀原文`);
 
     } catch (error) {
         showError(error.message || '發生錯誤，請重試');
     } finally {
         playBtn.disabled = false;
-        playBtn.textContent = '🔊 朗讀原文';
+        playBtn.textContent = '朗讀原文';
     }
 }
 
-// 綁定按鈕事件 (這行保留在最下面即可)
-if (playBtn) playBtn.addEventListener('click', playSpeech);
-
-// 綁定按鈕事件
+// 綁定按鈕事件（單次綁定）
 if (playBtn) playBtn.addEventListener('click', playSpeech);
 
 // 頁面加載時檢查服務狀態

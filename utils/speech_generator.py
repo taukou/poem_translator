@@ -3,13 +3,13 @@ import time
 import configparser
 import azure.cognitiveservices.speech as speechsdk
 
-# 讀取 Config (這裡假設你是在專案根目錄執行)
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+config_path = os.path.join(project_root, 'config.ini')
+config.read(config_path, encoding='utf-8')
 
-# 確保 config.ini 裡面有 [AzureSpeech] 區塊
-SPEECH_KEY = config.get('AzureSpeech', 'SPEECH_KEY', fallback='')
-SPEECH_REGION = config.get('AzureSpeech', 'SPEECH_REGION', fallback='')
+SPEECH_KEY = os.getenv('SPEECH_KEY', config.get('AzureSpeech', 'SPEECH_KEY', fallback=''))
+SPEECH_REGION = os.getenv('SPEECH_REGION', config.get('AzureSpeech', 'SPEECH_REGION', fallback=''))
 
 def float_to_percent_str(value):
     """將浮點數轉換為 SSML 支援的百分比格式 (例如 1.5 -> '+50%', 0.8 -> '-20%')"""

@@ -4,7 +4,7 @@ from .gemini_translator import translate_and_analyze, analyze_poem_emotions, com
 
 __all__ = [
     'translate_poem',
-    'classical_to_modern_chinese', 
+    'classical_to_modern_chinese',
     'azure_translate',
     'EmotionAnalyzer',
     'translate_and_analyze',

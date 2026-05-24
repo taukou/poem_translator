@@ -19,7 +19,7 @@ NLP期末專項 - 一個基於Flask框架的古詩詞翻譯應用，集成情緒
 ```
 poem_translator/
 ├── app.py                 # Flask應用主文件
-├── config.ini.example    # 配置範本（需複製為 config.ini 後填入密鑰）
+├── config.ini            # 配置範本
 ├── requirements.txt      # Python依賴
 ├── .gitignore           # Git忽略文件
 ├── .env.example         # 環境變量示例
@@ -234,11 +234,3 @@ python app.py
 ### 模板找不到錯誤
 - 確保 `templates` 和 `static` 目錄在正確位置
 - 檢查文件名是否正確
-
-## 📝 許可證
-
-MIT License
-
-## 👤 作者
-
-Created with ❤️ for poetry lovers
