@@ -6,7 +6,7 @@ import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
 from utils.speech_generator import generate_emotional_speech
-from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions, compare_poems
+from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -73,7 +73,7 @@ def translate_and_analyze_emotion(text, target_language='zh-Hant'):
     # 翻譯
     translation_result = translate_poem(text, target_language=target_language)
 
-    # 情緒分析（針對白話文，使用簡體 zh-Hans 作為分析語言）
+    # 情緒分析
     analyzer = EmotionAnalyzer()
     modern_text = translation_result.get('modern_chinese', '')
     emotion_result = analyzer.analyze_emotion_with_details(modern_text, language='zh-Hans')
@@ -160,21 +160,21 @@ def api_analyze_poem_emotions():
         return jsonify({'error': f'情感分析失敗: {str(e)}'}), 500
 
 
-@app.route('/api/compare-poems', methods=['POST'])
-def api_compare_poems():
-    """詩歌比較API - 使用 Gemini API 比較兩首詩的風格和特點"""
-    data = request.get_json()
-    text1 = data.get('text1', '').strip()
-    text2 = data.get('text2', '').strip()
+# @app.route('/api/compare-poems', methods=['POST'])
+# def api_compare_poems():
+#     """詩歌比較API - 使用 Gemini API 比較兩首詩的風格和特點"""
+#     data = request.get_json()
+#     text1 = data.get('text1', '').strip()
+#     text2 = data.get('text2', '').strip()
     
-    if not text1 or not text2:
-        return jsonify({'error': '請輸入兩首要比較的詩文'}), 400
+#     if not text1 or not text2:
+#         return jsonify({'error': '請輸入兩首要比較的詩文'}), 400
     
-    try:
-        result = compare_poems(text1, text2)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': f'詩歌比較失敗: {str(e)}'}), 500
+#     try:
+#         result = compare_poems(text1, text2)
+#         return jsonify(result)
+#     except Exception as e:
+#         return jsonify({'error': f'詩歌比較失敗: {str(e)}'}), 500
 
 
 @app.route('/api/analyze-emotion', methods=['POST'])
@@ -260,17 +260,17 @@ if __name__ == '__main__':
     
     if len(sys.argv) > 1 and sys.argv[1] == 'test':
         print("\n" + "="*60)
-        print("🧪 開始測試: 翻譯 + 情緒分析")
+        print("開始測試: 翻譯 + 情緒分析")
         print("="*60 + "\n")
         
         # 假輸入 - 古詩
         test_poem = "昔日戲言身後事，今朝都到眼前來。"
         
-        print(f"📖 原始古詩：{test_poem}\n")
+        print(f"原始古詩：{test_poem}\n")
         
         try:
             # 步驟1: 翻譯
-            print("📝 步驟1: 翻譯古詩...")
+            print("步驟1: 翻譯古詩...")
             print("-" * 60)
             translation_result = translate_poem(test_poem, target_language="zh-Hant")
             
@@ -280,7 +280,7 @@ if __name__ == '__main__':
             print(f"翻譯結果：{translation_result['translated']}\n")
             
             # 步驟2: 對翻譯結果進行情緒分析
-            print("😊 步驟2: 分析翻譯文本的情緒...")
+            print("步驟2: 分析翻譯文本的情緒...")
             print("-" * 60)
             
             analyzer = EmotionAnalyzer()
@@ -304,11 +304,11 @@ if __name__ == '__main__':
                     print()
             
             print("="*60)
-            print("✅ 測試完成！")
+            print("測試完成！")
             print("="*60 + "\n")
             
         except Exception as e:
-            print(f"\n❌ 測試失敗: {str(e)}")
+            print(f"\n測試失敗: {str(e)}")
             import traceback
             traceback.print_exc()
     else:

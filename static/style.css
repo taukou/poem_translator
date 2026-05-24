@@ -402,22 +402,23 @@ select:focus {
 .supplement-stack {
     display: grid;
     gap: 14px;
+    height: auto;
 }
 
 .ai-supplement-card {
     display: flex;
     flex-direction: column;
-    max-height: 620px;
+    max-height: none;
 }
 
 .ai-supplement-card .supplement-stack {
     min-height: 0;
-    overflow-y: auto;
+    overflow-y: visible;
     padding-right: 4px;
 }
 
 .ai-supplement-card .output-text {
-    max-height: 220px;
+    max-height: 240px;
     overflow-y: auto;
 }
 

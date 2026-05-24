@@ -42,3 +42,6 @@ Thumbs.db
 
 # 日誌
 *.log
+
+# 忽略產生的 audio 檔案
+/static/audio/

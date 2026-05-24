@@ -40,7 +40,7 @@ class EmotionAnalyzer:
         
         Args:
             text: 要分析的文本
-            language: 語言代碼 (預設: "zh-Hans" 簡體中文)
+            language: 語言代碼 (預設: "zh-Hant")
         
         Returns:
             dict: 包含整體情緒和逐句分析的結果
@@ -144,21 +144,21 @@ class EmotionAnalyzer:
             str: 十六進制顏色代碼
         """
         emotion_colors = {
-            "positive": "#FFD700",    # 金黃色 - 喜悅
-            "neutral": "#808080",     # 灰色 - 平靜
-            "negative": "#4169E1"     # 皇家藍 - 悲傷
+            "positive": "#FFD700",    # 喜悅
+            "neutral": "#808080",     # 平靜
+            "negative": "#4169E1"     # 悲傷
         }
         return emotion_colors.get(sentiment, "#808080")
 
 
-# 使用示例
-if __name__ == "__main__":
-    analyzer = EmotionAnalyzer()
+# # 使用示例
+# if __name__ == "__main__":
+#     analyzer = EmotionAnalyzer()
     
-    # 示例文本
-    sample_text = "這是一首很美麗的詩。我非常喜歡它。"
+#     # 示例文本
+#     sample_text = "這是一首很美麗的詩。我非常喜歡它。"
     
-    result = analyzer.analyze_emotion_with_details(sample_text)
-    print("\n=== 完整分析結果 ===")
-    print(f"整體情緒：{result['overall_sentiment']}")
-    print(f"句子數量：{result['sentences_count']}")
+#     result = analyzer.analyze_emotion_with_details(sample_text)
+#     print("\n=== 完整分析結果 ===")
+#     print(f"整體情緒：{result['overall_sentiment']}")
+#     print(f"句子數量：{result['sentences_count']}")
