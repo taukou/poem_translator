@@ -1,37 +1,3 @@
-"""
-utils/translator.py
-
-功能說明：
-    本模組負責詩詞翻譯功能，使用 Azure Translator API。
-
-翻譯流程：
-    1. 將文言文 / 古詩 lzh 轉成白話繁體中文 zh-Hant
-    2. 再將白話繁體中文 zh-Hant 翻譯成指定語言，例如德文 de
-
-主要提供給後端 API 對接的函式：
-    translate_poem(text, target_language="de")
-
-使用範例：
-    from utils.translator import translate_poem
-
-    result = translate_poem("昔日戲言身後事，今朝都到眼前來。", "de")
-    print(result)
-
-回傳格式：
-    {
-        "original": "原始文言文",
-        "modern_chinese": "白話中文",
-        "target_language": "de" ,
-        "translated": "德文翻譯結果"
-    }
-
-注意事項：
-    1. 專案根目錄需要有 config.ini
-    2. config.ini 需要包含 AzureTranslator 設定
-    3. requirements.txt 需要安裝 azure-ai-translation-text 和 azure-core
-
-    之後記得刪除這個
-"""
 import configparser
 
 from azure.ai.translation.text import TextTranslationClient
