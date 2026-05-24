@@ -213,21 +213,26 @@ def translate_and_analyze_route():
 
 @app.route('/api/generate-speech', methods=['POST'])
 def generate_speech():
-    """情感語音合成端點 - 根據情緒調整音調和語速"""
+    """情感語音合成端點 - 支援逐句情緒朗讀"""
     data = request.get_json()
     
-    # 接收前端傳來的參數，並設定預設值
     text = data.get('text', '').strip()
     emotion = data.get('emotion', '平')
     speed = float(data.get('speed', 1.0))
     pitch = float(data.get('pitch', 1.0))
+    sentence_emotions = data.get('sentence_emotions')
     
     if not text:
         return jsonify({'error': '請輸入要轉換的文本'}), 400
         
     try:
-        # 呼叫我們剛寫好的模組
-        result = generate_emotional_speech(text, emotion, speed, pitch)
+        result = generate_emotional_speech(
+            text,
+            emotion,
+            speed,
+            pitch,
+            sentence_emotions=sentence_emotions,
+        )
         return jsonify(result)
         
     except Exception as e:

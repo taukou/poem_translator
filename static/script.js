@@ -24,6 +24,7 @@ let currentWordAnnotations = [];
 let currentOriginalText = '';
 let tooltipHideTimer = null;
 let currentDetectedEmotion = '平'; // 用來記錄目前這首詩被分析出的情緒，預設為平靜
+let currentSentenceEmotions = []; // 直接保存 Azure 的逐句情緒結果，供朗讀使用
 
 function setHidden(element, shouldHide) {
     if (!element) {
@@ -430,6 +431,12 @@ function displayResult(data) {
     const emotionAnalysis = data.emotion_analysis || {};
     currentOriginalText = translation.original || inputText.value || '';
     currentWordAnnotations = [];
+    currentSentenceEmotions = Array.isArray(emotionAnalysis.sentences)
+        ? emotionAnalysis.sentences.map((sentence) => ({
+            index: sentence.index,
+            sentiment: sentence.sentiment,
+        }))
+        : [];
 
     renderOriginalPoem(currentOriginalText);
     modernText.textContent = translation.modern_chinese || '';
@@ -600,6 +607,7 @@ async function playSpeech() {
             body: JSON.stringify({ 
                 text: originalText,
                 emotion: emotion,
+                sentence_emotions: currentSentenceEmotions,
                 speed: 1.0,
                 pitch: 1.0
             })
