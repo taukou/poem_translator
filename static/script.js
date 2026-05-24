@@ -73,6 +73,89 @@ function fillPoemText(poemId) {
     hideError();
 }
 
+function splitSpeechSegments(text) {
+    const source = String(text || '').trim();
+    if (!source) {
+        return [];
+    }
+
+    const lines = source.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    if (lines.length > 1) {
+        return lines;
+    }
+
+    const segments = source
+        .split(/(?<=[。！？!?；;])\s*/g)
+        .map((segment) => segment.trim())
+        .filter(Boolean);
+
+    return segments.length ? segments : [source];
+}
+
+function splitOriginalByWeights(text, weights) {
+    const source = String(text || '').trim();
+    const normalizedWeights = Array.isArray(weights) ? weights.map((weight) => Math.max(1, Number(weight) || 0)) : [];
+
+    if (!source) {
+        return [];
+    }
+
+    if (!normalizedWeights.length) {
+        return splitSpeechSegments(source);
+    }
+
+    const chars = Array.from(source.replace(/\s+/g, ''));
+    if (!chars.length) {
+        return [];
+    }
+
+    const totalWeight = normalizedWeights.reduce((sum, weight) => sum + weight, 0) || 1;
+    const segments = [];
+    let cursor = 0;
+    let remainingChars = chars.length;
+    let remainingWeight = totalWeight;
+
+    for (let index = 0; index < normalizedWeights.length; index += 1) {
+        const remainingSegments = normalizedWeights.length - index;
+        const targetLength = index === normalizedWeights.length - 1
+            ? remainingChars
+            : Math.max(1, Math.round(remainingChars * (normalizedWeights[index] / remainingWeight)));
+
+        const segmentLength = Math.max(1, Math.min(targetLength, remainingChars - (remainingSegments - 1)));
+        const segment = chars.slice(cursor, cursor + segmentLength).join('');
+        segments.push(segment);
+
+        cursor += segmentLength;
+        remainingChars = Math.max(0, remainingChars - segmentLength);
+        remainingWeight = Math.max(1, remainingWeight - normalizedWeights[index]);
+    }
+
+    if (cursor < chars.length && segments.length) {
+        segments[segments.length - 1] = `${segments[segments.length - 1]}${chars.slice(cursor).join('')}`;
+    }
+
+    return segments.filter(Boolean);
+}
+
+function buildSpeechSentenceEmotions(originalText, uiSentences, fallbackSentiment) {
+    const translationSentences = Array.isArray(uiSentences) ? uiSentences : [];
+    if (!translationSentences.length) {
+        return [];
+    }
+
+    const weights = translationSentences.map((sentence) => {
+        const text = String(sentence && sentence.text ? sentence.text : '').trim();
+        return Math.max(1, text.replace(/\s+/g, '').length);
+    });
+    const originalSegments = splitOriginalByWeights(originalText, weights);
+
+    return translationSentences.map((sentence, index) => ({
+        index: index + 1,
+        text: originalSegments[index] || originalSegments[originalSegments.length - 1] || '',
+        sentiment: sentence?.sentiment || fallbackSentiment || 'neutral',
+    }));
+}
+
 function escapeHTML(value) {
     return String(value || '')
         .replaceAll('&', '&amp;')
@@ -429,14 +512,16 @@ function copyText() {
 function displayResult(data) {
     const translation = data.translation || data;
     const emotionAnalysis = data.emotion_analysis || {};
+    const speechEmotionAnalysis = data.speech_emotion_analysis || {};
     currentOriginalText = translation.original || inputText.value || '';
     currentWordAnnotations = [];
-    currentSentenceEmotions = Array.isArray(emotionAnalysis.sentences)
-        ? emotionAnalysis.sentences.map((sentence) => ({
-            index: sentence.index,
-            sentiment: sentence.sentiment,
-        }))
-        : [];
+    const speechSentences = Array.isArray(speechEmotionAnalysis.sentences) ? speechEmotionAnalysis.sentences : [];
+    currentSentenceEmotions = speechSentences.map((sentence, index) => ({
+        index: sentence.index || index + 1,
+        text: sentence.text || '',
+        sentiment: sentence.sentiment || speechEmotionAnalysis.overall_sentiment || 'neutral',
+        opinions: Array.isArray(sentence.opinions) ? sentence.opinions : [],
+    }));
 
     renderOriginalPoem(currentOriginalText);
     modernText.textContent = translation.modern_chinese || '';

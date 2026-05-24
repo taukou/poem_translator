@@ -73,10 +73,13 @@ def translate_and_analyze_emotion(text, target_language='zh-Hant'):
     # 翻譯
     translation_result = translate_poem(text, target_language=target_language)
 
-    # 情緒分析（針對白話文，使用簡體 zh-Hans 作為分析語言）
+    # 情緒分析（前端顯示用：針對白話文）
     analyzer = EmotionAnalyzer()
     modern_text = translation_result.get('modern_chinese', '')
     emotion_result = analyzer.analyze_emotion_with_details(modern_text, language='zh-Hans')
+
+    # 朗讀用：針對原文再做一次 Azure 逐句分析，避免和白話文分析錯位
+    speech_emotion_result = analyzer.analyze_emotion_with_details(text, language='zh-Hans')
 
     return {
         'success': True,
@@ -86,7 +89,8 @@ def translate_and_analyze_emotion(text, target_language='zh-Hant'):
             'target_language': translation_result.get('target_language', target_language),
             'translated': translation_result.get('translated', '')
         },
-        'emotion_analysis': emotion_result
+        'emotion_analysis': emotion_result,
+        'speech_emotion_analysis': speech_emotion_result
     }
 
 
@@ -138,9 +142,11 @@ def translate_detailed():
     try:
         result = translate_and_analyze(text, target_language)
         if result.get('error'):
+            app.logger.error("translate-detailed failed: %s", result.get('error'))
             return jsonify(result), 502
         return jsonify(result)
     except Exception as e:
+        app.logger.exception("translate-detailed unexpected failure")
         return jsonify({'error': f'古詩解釋失敗: {str(e)}'}), 500
 
 
@@ -226,6 +232,7 @@ def generate_speech():
         return jsonify({'error': '請輸入要轉換的文本'}), 400
         
     try:
+        app.logger.info("generate-speech sentence_emotions=%s", sentence_emotions)
         result = generate_emotional_speech(
             text,
             emotion,

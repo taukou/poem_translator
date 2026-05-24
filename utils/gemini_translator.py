@@ -111,8 +111,17 @@ def _call_gemini(prompt: str, gemini_api_key: str, model: str = DEFAULT_GEMINI_M
     }
 
     response = requests.post(api_url, json=payload, headers=headers, timeout=30)
-    response.raise_for_status()
-    return _extract_gemini_text(response.json())
+    if not response.ok:
+        raise requests.HTTPError(
+            f"Gemini API HTTP {response.status_code}: {response.text}",
+            response=response,
+        )
+
+    response_data = response.json()
+    try:
+        return _extract_gemini_text(response_data)
+    except ValueError as exc:
+        raise ValueError(f"{exc}; raw_response={response_data}") from exc
 
 
 def _parse_json_response(response_text: str, fallback: dict) -> dict:
@@ -216,11 +225,13 @@ def translate_and_analyze(text: str, target_language: str = "zh-Hant") -> dict:
         }
     
     except requests.exceptions.RequestException as e:
+        print(f"[translate_and_analyze] Gemini request failed: {e}")
         return {
             "error": f"Gemini API 詳細解釋失敗: {str(e)}",
             "original": text
         }
     except Exception as e:
+        print(f"[translate_and_analyze] Unexpected error: {e}")
         return {
             "error": f"Gemini API 詳細解釋失敗: {str(e)}",
             "original": text
@@ -269,10 +280,12 @@ def analyze_poem_emotions(text: str) -> dict:
         return emotion_analysis
     
     except requests.exceptions.RequestException as e:
+        print(f"[analyze_poem_emotions] Gemini request failed: {e}")
         return {
             "error": f"Gemini API 情感分析失敗: {str(e)}"
         }
     except Exception as e:
+        print(f"[analyze_poem_emotions] Unexpected error: {e}")
         return {
             "error": f"Gemini API 情感分析失敗: {str(e)}"
         }
@@ -328,10 +341,12 @@ def compare_poems(text1: str, text2: str) -> dict:
         }
     
     except requests.exceptions.RequestException as e:
+        print(f"[compare_poems] Gemini request failed: {e}")
         return {
             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
         }
     except Exception as e:
+        print(f"[compare_poems] Unexpected error: {e}")
         return {
             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
         }

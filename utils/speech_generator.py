@@ -14,6 +14,18 @@ config.read(config_path, encoding='utf-8')
 
 SPEECH_KEY = os.getenv('SPEECH_KEY', config.get('AzureSpeech', 'SPEECH_KEY', fallback=''))
 SPEECH_REGION = os.getenv('SPEECH_REGION', config.get('AzureSpeech', 'SPEECH_REGION', fallback=''))
+SPEECH_SYNTHESIS_FRAME_TIMEOUT_MS = int(
+    os.getenv(
+        'SPEECH_SYNTHESIS_FRAME_TIMEOUT_MS',
+        config.get('AzureSpeech', 'SPEECH_SYNTHESIS_FRAME_TIMEOUT_MS', fallback='10000')
+    )
+)
+SPEECH_SYNTHESIS_RTF_THRESHOLD = float(
+    os.getenv(
+        'SPEECH_SYNTHESIS_RTF_THRESHOLD',
+        config.get('AzureSpeech', 'SPEECH_SYNTHESIS_RTF_THRESHOLD', fallback='4')
+    )
+)
 
 SENTIMENT_STYLE_MAP = {
     "positive": "cheerful",
@@ -59,28 +71,28 @@ def _split_poem_segments(text):
 
 def _build_sentence_items(text, emotion=None, sentence_emotions=None):
     """Build sentence items with per-sentence sentiment."""
+    original_segments = _split_poem_segments(text)
+
     if sentence_emotions and isinstance(sentence_emotions, list):
-        # 優先採用前端傳來的 Azure 逐句情緒，只用順序，不重新計算情緒文本。
-        sentiments = []
-        for item in sentence_emotions:
-            if isinstance(item, dict):
-                sentiments.append(_normalize_sentiment(item.get("sentiment") or item.get("emotion")))
+        items = []
+        for index, source_item in enumerate(sentence_emotions):
+            if isinstance(source_item, dict):
+                sentence_text = str(source_item.get("text") or source_item.get("sentence") or "").strip()
+                sentiment = _normalize_sentiment(source_item.get("sentiment") or source_item.get("emotion"))
             else:
-                sentiments.append(_normalize_sentiment(item))
+                sentence_text = ""
+                sentiment = _normalize_sentiment(source_item)
 
-        segments = _split_poem_segments(text)
-        if not segments:
-            segments = [text.strip()]
+            if not sentence_text and index < len(original_segments):
+                sentence_text = original_segments[index]
 
-        if sentiments and segments:
-            fallback_sentiment = sentiments[-1]
-            items = []
-            for idx, segment in enumerate(segments):
-                sentiment = sentiments[idx] if idx < len(sentiments) else fallback_sentiment
+            if sentence_text:
                 items.append({
-                    "text": segment,
+                    "text": sentence_text,
                     "sentiment": sentiment,
                 })
+
+        if items:
             return items
 
     # 若前端沒有傳逐句結果，才退回到本機切句 + 整體情緒。
@@ -108,7 +120,7 @@ def _build_sentence_items(text, emotion=None, sentence_emotions=None):
             "text": segment,
             "sentiment": fallback_sentiment,
         }
-        for segment in _split_poem_segments(text)
+        for segment in original_segments
         if segment
     ]
 
@@ -158,6 +170,14 @@ def generate_emotional_speech(text, emotion, speed=1.0, pitch=1.0, sentence_emot
     speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
     speech_config.set_speech_synthesis_output_format(
         speechsdk.SpeechSynthesisOutputFormat.Audio16Khz64KBitRateMonoMp3
+    )
+    speech_config.set_property(
+        speechsdk.PropertyId.SpeechSynthesis_FrameTimeoutInterval,
+        str(SPEECH_SYNTHESIS_FRAME_TIMEOUT_MS)
+    )
+    speech_config.set_property(
+        speechsdk.PropertyId.SpeechSynthesis_RtfTimeoutThreshold,
+        str(SPEECH_SYNTHESIS_RTF_THRESHOLD)
     )
     
     # 使用老師範例中的聲音
