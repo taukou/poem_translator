@@ -61,7 +61,7 @@ import json
 import re
 import os
 import requests
-from utils.translator import classical_to_modern_chinese, azure_translate
+from utils.translator import classical_to_modern_chinese
 
 DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
@@ -110,7 +110,7 @@ def _call_gemini(prompt: str, gemini_api_key: str, model: str = DEFAULT_GEMINI_M
         }
     }
 
-    response = requests.post(api_url, json=payload, headers=headers, timeout=30)
+    response = requests.post(api_url, json=payload, headers=headers, timeout=60)
     response.raise_for_status()
     return _extract_gemini_text(response.json())
 
@@ -277,61 +277,3 @@ def analyze_poem_emotions(text: str) -> dict:
             "error": f"Gemini API 情感分析失敗: {str(e)}"
         }
 
-
-# def compare_poems(text1: str, text2: str) -> dict:
-#     """
-#     使用 Gemini API 比較兩首詩的風格和特點
-    
-#     Args:
-#         text1: 第一首古詩
-#         text2: 第二首古詩
-    
-#     Returns:
-#         包含比較結果的字典
-#     """
-#     try:
-#         config = get_config()
-#         gemini_api_key = config.get("GEMINI", "gemini_api_key", fallback=None)
-#         if not gemini_api_key or gemini_api_key == "your_gemini_api_key_here":
-#             return {
-#                 "error": "Gemini API 密鑰未配置。請在 config.ini 中設置 GEMINI.gemini_api_key"
-#             }
-        
-#         prompt = f"""請比較以下兩首古詩，使用 JSON 格式回覆：
-
-# 【古詩1】
-# {text1}
-
-# 【古詩2】
-# {text2}
-
-# 回覆格式（必須是有效的 JSON）：
-# {{
-#     "similarities": ["...", "..."],
-#     "differences": ["...", "..."],
-#     "style_comparison": "...",
-#     "theme_comparison": "...",
-#     "emotion_comparison": "...",
-#     "literary_techniques": "..."
-# }}"""
-
-#         response_text = _call_gemini(prompt, gemini_api_key)
-#         comparison = _parse_json_response(response_text, {
-#             "error": "無法解析比較結果",
-#             "raw_response": response_text
-#         })
-        
-#         return {
-#             "poem1": text1,
-#             "poem2": text2,
-#             "comparison": comparison
-#         }
-    
-#     except requests.exceptions.RequestException as e:
-#         return {
-#             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
-#         }
-#     except Exception as e:
-#         return {
-#             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
-#         }
