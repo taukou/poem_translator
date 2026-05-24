@@ -6,7 +6,7 @@ import re
 from utils.translator import translate_poem
 from utils.emotion_analyzer import EmotionAnalyzer
 from utils.speech_generator import generate_emotional_speech
-from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions, compare_poems
+from utils.gemini_translator import translate_and_analyze, analyze_poem_emotions
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 CORS(app)
@@ -160,21 +160,21 @@ def api_analyze_poem_emotions():
         return jsonify({'error': f'情感分析失敗: {str(e)}'}), 500
 
 
-@app.route('/api/compare-poems', methods=['POST'])
-def api_compare_poems():
-    """詩歌比較API - 使用 Gemini API 比較兩首詩的風格和特點"""
-    data = request.get_json()
-    text1 = data.get('text1', '').strip()
-    text2 = data.get('text2', '').strip()
+# @app.route('/api/compare-poems', methods=['POST'])
+# def api_compare_poems():
+#     """詩歌比較API - 使用 Gemini API 比較兩首詩的風格和特點"""
+#     data = request.get_json()
+#     text1 = data.get('text1', '').strip()
+#     text2 = data.get('text2', '').strip()
     
-    if not text1 or not text2:
-        return jsonify({'error': '請輸入兩首要比較的詩文'}), 400
+#     if not text1 or not text2:
+#         return jsonify({'error': '請輸入兩首要比較的詩文'}), 400
     
-    try:
-        result = compare_poems(text1, text2)
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({'error': f'詩歌比較失敗: {str(e)}'}), 500
+#     try:
+#         result = compare_poems(text1, text2)
+#         return jsonify(result)
+#     except Exception as e:
+#         return jsonify({'error': f'詩歌比較失敗: {str(e)}'}), 500
 
 
 @app.route('/api/analyze-emotion', methods=['POST'])

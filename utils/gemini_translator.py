@@ -67,7 +67,7 @@ DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 
 def get_config():
-    """获取配置对象，使用正确的文件路径"""
+    """取得配置對象，使用正確的檔案路徑"""
     config = configparser.ConfigParser()
     config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.ini")
     config.read(config_path, encoding="utf-8")
@@ -157,36 +157,36 @@ def translate_and_analyze(text: str, target_language: str = "zh-Hant") -> dict:
         # 構建詳細解釋提示
         prompt = f"""請對以下古詩進行深入分析和解釋，使用 JSON 格式回覆：
 
-【原文】
-{text}
+                    【原文】
+                    {text}
 
-【白話翻譯】
-{modern_chinese}
+                    【白話翻譯】
+                    {modern_chinese}
 
-請提供以下內容（必須是有效的 JSON）：
-{{
-    "content_explanation": {{
-        "overall_meaning": "整體含義",
-        "line_by_line_analysis": ["第一句解釋", "第二句解釋"],
-        "central_theme": "核心主旨",
-        "artistic_conception": "意境描述"
-    }},
-    "word_annotations": [
-        {{
-            "word": "詞彙",
-            "meaning": "含義",
-            "usage": "用法說明"
-        }}
-    ],
-    "author_introduction": {{
-        "name": "作者名字",
-        "period": "時代",
-        "biography": "生平簡介",
-        "literary_style": "文學風格",
-        "achievements": "主要成就",
-        "poem_status": "該詩在其作品中的地位"
-    }}
-}}"""
+                    請提供以下內容（必須是有效的 JSON）：
+                    {{
+                        "content_explanation": {{
+                            "overall_meaning": "整體含義",
+                            "line_by_line_analysis": ["第一句解釋", "第二句解釋"],
+                            "central_theme": "核心主旨",
+                            "artistic_conception": "意境描述"
+                        }},
+                        "word_annotations": [
+                            {{
+                                "word": "詞彙",
+                                "meaning": "含義",
+                                "usage": "用法說明"
+                            }}
+                        ],
+                        "author_introduction": {{
+                            "name": "作者名字",
+                            "period": "時代",
+                            "biography": "生平簡介",
+                            "literary_style": "文學風格",
+                            "achievements": "主要成就",
+                            "poem_status": "該詩在其作品中的地位"
+                        }}
+                    }}"""
 
         response_text = _call_gemini(prompt, gemini_api_key)
         fallback_analysis = {
@@ -278,60 +278,60 @@ def analyze_poem_emotions(text: str) -> dict:
         }
 
 
-def compare_poems(text1: str, text2: str) -> dict:
-    """
-    使用 Gemini API 比較兩首詩的風格和特點
+# def compare_poems(text1: str, text2: str) -> dict:
+#     """
+#     使用 Gemini API 比較兩首詩的風格和特點
     
-    Args:
-        text1: 第一首古詩
-        text2: 第二首古詩
+#     Args:
+#         text1: 第一首古詩
+#         text2: 第二首古詩
     
-    Returns:
-        包含比較結果的字典
-    """
-    try:
-        config = get_config()
-        gemini_api_key = config.get("GEMINI", "gemini_api_key", fallback=None)
-        if not gemini_api_key or gemini_api_key == "your_gemini_api_key_here":
-            return {
-                "error": "Gemini API 密鑰未配置。請在 config.ini 中設置 GEMINI.gemini_api_key"
-            }
+#     Returns:
+#         包含比較結果的字典
+#     """
+#     try:
+#         config = get_config()
+#         gemini_api_key = config.get("GEMINI", "gemini_api_key", fallback=None)
+#         if not gemini_api_key or gemini_api_key == "your_gemini_api_key_here":
+#             return {
+#                 "error": "Gemini API 密鑰未配置。請在 config.ini 中設置 GEMINI.gemini_api_key"
+#             }
         
-        prompt = f"""請比較以下兩首古詩，使用 JSON 格式回覆：
+#         prompt = f"""請比較以下兩首古詩，使用 JSON 格式回覆：
 
-【古詩1】
-{text1}
+# 【古詩1】
+# {text1}
 
-【古詩2】
-{text2}
+# 【古詩2】
+# {text2}
 
-回覆格式（必須是有效的 JSON）：
-{{
-    "similarities": ["...", "..."],
-    "differences": ["...", "..."],
-    "style_comparison": "...",
-    "theme_comparison": "...",
-    "emotion_comparison": "...",
-    "literary_techniques": "..."
-}}"""
+# 回覆格式（必須是有效的 JSON）：
+# {{
+#     "similarities": ["...", "..."],
+#     "differences": ["...", "..."],
+#     "style_comparison": "...",
+#     "theme_comparison": "...",
+#     "emotion_comparison": "...",
+#     "literary_techniques": "..."
+# }}"""
 
-        response_text = _call_gemini(prompt, gemini_api_key)
-        comparison = _parse_json_response(response_text, {
-            "error": "無法解析比較結果",
-            "raw_response": response_text
-        })
+#         response_text = _call_gemini(prompt, gemini_api_key)
+#         comparison = _parse_json_response(response_text, {
+#             "error": "無法解析比較結果",
+#             "raw_response": response_text
+#         })
         
-        return {
-            "poem1": text1,
-            "poem2": text2,
-            "comparison": comparison
-        }
+#         return {
+#             "poem1": text1,
+#             "poem2": text2,
+#             "comparison": comparison
+#         }
     
-    except requests.exceptions.RequestException as e:
-        return {
-            "error": f"Gemini API 詩歌比較失敗: {str(e)}"
-        }
-    except Exception as e:
-        return {
-            "error": f"Gemini API 詩歌比較失敗: {str(e)}"
-        }
+#     except requests.exceptions.RequestException as e:
+#         return {
+#             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
+#         }
+#     except Exception as e:
+#         return {
+#             "error": f"Gemini API 詩歌比較失敗: {str(e)}"
+#         }
